@@ -1,0 +1,42 @@
+PANTÉON · LABORATORIO v1.1 · PAQUETE COMPLETO
+
+Este ZIP contiene una versión sincronizada de todas las páginas y sus dependencias,
+incluyendo los ajustes aprobados hasta la regla de botones secundarios (Prueba 12).
+
+ARCHIVOS (sube todos a la RAÍZ de tu repositorio, no el ZIP):
+- index.html: acceso directo desde la URL principal de GitHub Pages
+- inicio.html: contenedor de navegación hacia las otras páginas
+- inicio-v1.0.html: Inicio con menú aprobado y fichas de series actualizadas
+- catalogo.html: Series, Lanzamientos y Populares (con filtros separados)
+- serie.html: plantilla Perfil de serie
+- base.css: diseño base
+- extra.css: estilos de Catálogo, Perfil y componentes compartidos
+- app.js: interacciones de Catálogo y Perfil
+- data.js: datos de prueba
+
+INSTALACIÓN EN GITHUB DESDE IPHONE
+1. Abre el repositorio en Safari en modo sitio de escritorio si hace falta.
+2. Elimina o reemplaza las versiones antiguas de estos mismos nueve archivos.
+3. Sube los 9 archivos que están dentro del ZIP (no subas la carpeta completa).
+4. Confirma con Commit changes.
+5. Revisa Settings > Pages para confirmar branch main / (root).
+6. Visita https://TUUSUARIO.github.io/NOMBRE-REPOSITORIO/
+   o usa la ruta /inicio.html para abrir Inicio directamente.
+7. Espera la publicación y recarga la página; si Safari usa caché,
+   abre el enlace en una pestaña privada.
+
+CONTENIDOS APROBADOS
+- Inicio: header, menú, viñetas y fichas de serie con calificación a la izquierda,
+  botón Seguir gris sin borde y cruz roja a la derecha.
+- Series: navegación angular, filtros múltiples, ordenación única,
+  valoración y seguimiento aprobados, Mostrar más gris con texto negro.
+- Lanzamientos: filtros múltiples, ordenación, botones Lo quiero/Lo tengo en negro,
+  seguimiento rojo, puntuación sobre portada con 30% de opacidad.
+- Populares: cuatro rankings, tarjetas de tomos heredadas de Lanzamientos,
+  Ver ranking completo gris con letras negras y separación bajo las tarjetas.
+- Perfil de serie: boceto funcional con 24 tomos de prueba y controles.
+
+Los datos, rankings, puntuaciones y comentarios son DEMOSTRATIVOS.
+No contiene backend ni pagos. Los cambios de colección se guardan en el navegador.
+El respaldo histórico original del Inicio está disponible por separado;
+este archivo incluye las correcciones solicitadas después de aquella aprobación.
