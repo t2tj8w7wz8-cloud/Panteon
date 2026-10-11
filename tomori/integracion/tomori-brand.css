@@ -1,0 +1,63 @@
+/* TOMORI — recursos de identidad visual v1.0 */
+:root {
+  --tm-madera: #8B5E3C;
+  --tm-dorado: #D5A677;
+  --tm-crema: #EEDDC6;
+  --tm-tinta: #2B2B2B;
+  --tm-rojo: #AC493F;
+  --tm-verde: #606D5B;
+}
+/* No reemplazar estilos globales existentes del proyecto Pantéon. */
+.tm-brand-img { display: block; max-width: 100%; height: auto; object-fit: contain; }
+.tm-header-logo { width: clamp(144px, 20vw, 260px); }
+.tm-header-logo--compacto { width: clamp(110px, 14vw, 170px); }
+.tm-brand-icon { width: 42px; height: 42px; object-fit: contain; }
+/* Personalizar tamaño en el layout original, sin modificar su comportamiento. */
+
+
+/* IDENTIDAD TOMORI — HEADER GLOBAL APROBADO · 3 páginas y futuras
+   No modifica alturas, animaciones, tarjetas, botones ni navegación. */
+
+/* Header abierto: logo principal; header compacto: logo horizontal, sin isotipo.
+   Geometría idéntica a la versión de Inicio aprobada. */
+.hero h1.tm-brand-title{display:block;margin:0;line-height:0;letter-spacing:normal;max-width:100%}
+.hero h1.tm-brand-title picture{display:block}
+.hero h1.tm-brand-title .tm-header-logo-principal{
+  display:block;width:clamp(300px,32vw,415px);max-width:calc(100vw - 48px);
+  height:auto;object-fit:contain;
+}
+.small-brand.tm-brand-only-logo{display:flex;align-items:center;gap:0;line-height:0}
+.small-brand.tm-brand-only-logo picture{display:block;flex-shrink:0}
+.small-brand.tm-brand-only-logo .tm-header-logo-horizontal{
+  display:block;width:clamp(135px,16vw,185px);height:auto;max-width:calc(100vw - 110px);
+  object-fit:contain;
+}
+@media(max-width:600px){
+  .hero h1.tm-brand-title .tm-header-logo-principal{
+    width:min(280px,calc(100vw - 48px));
+  }
+  .small-brand.tm-brand-only-logo .tm-header-logo-horizontal{width:145px}
+}
+@media(max-width:355px){
+  .small-brand.tm-brand-only-logo .tm-header-logo-horizontal{width:126px}
+}
+
+/* Catálogo y Perfil conservan su título propio en el header abierto.
+   Solo sustituimos el bloque provisional LOGO con la marca principal. */
+body[data-page="catálogo"] .tm-page-logo,
+body[data-page="perfil de serie"] .tm-page-logo {
+  display:block;flex-shrink:0;line-height:0;margin-bottom:8px;
+}
+body[data-page="catálogo"] .tm-page-logo picture,
+body[data-page="perfil de serie"] .tm-page-logo picture {display:block}
+body[data-page="catálogo"] .tm-page-logo .tm-header-logo-principal,
+body[data-page="perfil de serie"] .tm-page-logo .tm-header-logo-principal {
+  display:block;width:clamp(156px,17vw,218px);max-width:calc(100vw - 48px);
+  height:auto;object-fit:contain;
+}
+@media (max-width:600px) {
+  body[data-page="catálogo"] .tm-page-logo .tm-header-logo-principal,
+  body[data-page="perfil de serie"] .tm-page-logo .tm-header-logo-principal {
+    width:min(152px,calc(100vw - 64px));
+  }
+}
