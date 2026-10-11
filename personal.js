@@ -20,11 +20,20 @@ function drawTileGeometries(){
     const cut=Math.min(h*.36,44,w*.20), pad=1.5,type=b.dataset.geometry;
     const left=type.startsWith('left');const a=type.endsWith('a');
     let pts;
-    if((page==='perfil de usuario'||page==='mi colección') && !left){
-      // Las diagonales de ambas viñetas son PARALELAS.
-      // La silueta derecha se prolonga hacia la izquierda dentro del hueco
-      // recortado de la izquierda; así el espacio visible es realmente 12px.
-      // Mantener la forma escalonada y su separación real de 12 px.
+    if(page==='mi colección'){
+      // Mantener el ancho y la altura EXACTOS de las 4 viñetas aprobadas.
+      // Las diagonales se centran a ambos lados de la división de la cuadrícula:
+      // cada silueta conserva su anchura media original y el hueco libre de 12px.
+      // Sin agrandar la viñeta derecha como ocurría con el corte de 44px exterior.
+      const half=cut/2, edge=1; // borde negro de 2px -> 12px libres entre trazos
+      if(left) pts=a
+        ? [[edge,edge],[w+half-edge,edge],[w-half-edge,h-edge],[edge,h-edge]]
+        : [[edge,edge],[w-half-edge,edge],[w+half-edge,h-edge],[edge,h-edge]];
+      else pts=a
+        ? [[half+edge,edge],[w-edge,edge],[w-edge,h-edge],[-half+edge,h-edge]]
+        : [[-half+edge,edge],[w-edge,edge],[w-edge,h-edge],[half+edge,h-edge]];
+    }else if(page==='perfil de usuario' && !left){
+      // Geometría aprobada del Perfil de usuario: NO modificar.
       pts=a?[[-pad,pad],[w-pad,pad],[w-pad,h-pad],[-cut-pad,h-pad]]:
             [[-cut-pad,pad],[w-pad,pad],[w-pad,h-pad],[-pad,h-pad]];
     }else if(left)pts=a?[[pad,pad],[w-pad,pad],[w-cut,h-pad],[pad,h-pad]]:[[pad,pad],[w-cut,pad],[w-pad,h-pad],[pad,h-pad]];
