@@ -1,4 +1,4 @@
-/* TOMORI v1.2 — EXPERIMENTAL: Open Library Cover API (ISBN-13 exacto).
+/* TOMORI v1.2 — EXPERIMENTAL v1.1: Open Library Cover API (ISBN-13 exacto).
  * Nunca sustituye datos bibliográficos ni acredita licencias comerciales.
  * Desactivado por defecto. Monta imágenes SOLO con consentimiento del interruptor.
  * Conserva las cubiertas negras, tamaños y componentes aprobados.
@@ -16,6 +16,7 @@
   const validated = new Map(); // isbn -> true/false (404, imagen vacía, error)
   const pending = new Map(); // isbn -> Promise<boolean>
   const pendingQueue = [];
+  const availability = new Map(); // ISBN -> 'consultando' | 'disponible' | 'no-disponible' | 'limite'
   let enabled = false;
   let processing = false;
   let refreshQueued = false;
@@ -53,6 +54,28 @@
     return volume?.isbn13 || null;
   }
 
+  // Diagnóstico visible: una ausencia de imágenes no debe parecer un fallo silencioso.
+  // Los ISBN informan identidad bibliográfica, nunca disponibilidad de portadas ni derechos.
+  function eligibleISBNs() {
+    return [...new Set(volumes().filter(v => v.editionId && validISBN13(v.isbn13)).map(v => v.isbn13))];
+  }
+  function report() {
+    const target = document.querySelector('.tomori-ol-status');
+    if (!target) return;
+    if (!enabled) { target.textContent = 'Desactivadas · portada genérica'; return; }
+    const n = eligibleISBNs().length;
+    const ok = [...availability.values()].filter(x => x === 'disponible').length;
+    const bad = [...availability.values()].filter(x => x === 'no-disponible').length;
+    const busy = [...availability.values()].filter(x => x === 'consultando').length;
+    const limited = [...availability.values()].filter(x => x === 'limite').length;
+    if (!n) {target.textContent = 'Sin ISBN válidos para consultar; se mantiene la portada genérica'; return;}
+    const parts = [`${n} ISBN registrados`, `${ok} portadas disponibles`];
+    if (bad) parts.push(`${bad} sin imagen o error de conexión`);
+    if (busy) parts.push(`${busy} consultando`);
+    if (limited) parts.push('límite temporal alcanzado; reintentar después');
+    if (!availability.size) parts.push('desplázate hasta las tarjetas para consultar');
+    target.textContent = parts.join(' · ');
+  }
   function requestLog() {
     try { const value = JSON.parse(stored(TRAFFIC, '[]')); return (Array.isArray(value) ? value : []).filter(t => typeof t === 'number' && Date.now() - t < RATE_WINDOW && t <= Date.now()); }
     catch (_) { return []; }
@@ -80,13 +103,15 @@
       const task = pendingQueue.shift();
       if (!enabled) { pending.delete(task.isbn); task.resolve(false); continue; }
       if (validated.has(task.isbn)) { pending.delete(task.isbn); task.resolve(validated.get(task.isbn)); continue; }
-      if (requestLog().length >= MAX_REQUESTS) { pending.delete(task.isbn); task.resolve(false); continue; }
+      if (requestLog().length >= MAX_REQUESTS) { availability.set(task.isbn, 'limite'); report(); pending.delete(task.isbn); task.resolve(false); continue; }
       const delay = Math.max(0, DELAY_MS - (Date.now() - lastRequestAt));
       if (delay) await new Promise(resolve => setTimeout(resolve, delay));
-      if (!enabled || !recordRequest()) { pending.delete(task.isbn); task.resolve(false); continue; }
+      if (!enabled || !recordRequest()) { if (enabled) availability.set(task.isbn, 'limite'); report(); pending.delete(task.isbn); task.resolve(false); continue; }
       lastRequestAt = Date.now();
       const success = await imageExists(task.isbn);
       validated.set(task.isbn, success);
+      availability.set(task.isbn, success ? 'disponible' : 'no-disponible');
+      report();
       pending.delete(task.isbn);
       task.resolve(success);
     }
@@ -95,6 +120,7 @@
   function verify(isbn) {
     if (validated.has(isbn)) return Promise.resolve(validated.get(isbn));
     if (pending.has(isbn)) return pending.get(isbn);
+    availability.set(isbn, 'consultando'); report();
     const promise = new Promise(resolve => pendingQueue.push({isbn, resolve}));
     pending.set(isbn, promise);
     void runQueue();
@@ -117,12 +143,13 @@
     image.dataset.sourceUrl = coverUrl(isbn);
     image.dataset.rightsStatus = 'pendiente-de-verificacion';
     image.title = `Open Library · ISBN ${isbn} · Derechos de uso comercial sin confirmar`;
-    image.onerror = () => { validated.set(isbn, false); clearCover(node); };
+    image.onerror = () => { validated.set(isbn, false); availability.set(isbn, 'no-disponible'); clearCover(node); report(); };
     image.onload = () => {
-      if (image.naturalWidth <= 1 || image.naturalHeight <= 1) { validated.set(isbn, false); clearCover(node); return; }
+      if (image.naturalWidth <= 1 || image.naturalHeight <= 1) { validated.set(isbn, false); availability.set(isbn, 'no-disponible'); clearCover(node); report(); return; }
       if (!originalLabels.has(node)) originalLabels.set(node, node.getAttribute('aria-label') || 'Portada provisional');
       node.setAttribute('aria-label', `Portada obtenida desde Open Library para ISBN ${isbn}; autorización comercial pendiente`);
       node.classList.add('tomori-ol-loaded');
+      report();
     };
     node.prepend(image);
     image.src = coverUrl(isbn); // URL exacta reutiliza la respuesta ya cacheada por el navegador
@@ -150,8 +177,7 @@
     enabled = Boolean(next);
     if (persist) write(FLAG, enabled ? 'on' : 'off');
     document.querySelectorAll('.tomori-ol-switch').forEach(input => { input.checked = enabled; input.setAttribute('aria-checked', String(enabled)); });
-    const status = document.querySelector('.tomori-ol-status');
-    if (status) status.textContent = enabled ? 'Activadas · uso experimental' : 'Desactivadas · portada genérica';
+    report();
     if (!enabled) {
       if (visibleObserver) visibleObserver.disconnect();
       document.querySelectorAll('.tomori-ol-cover').forEach(img => clearCover(img.parentElement));
@@ -162,7 +188,18 @@
     if (!footer || footer.querySelector('.tomori-ol-control')) return;
     const container = document.createElement('div');
     container.className = 'tomori-ol-control';
-    container.innerHTML = `<label class="tomori-ol-label"><input type="checkbox" class="tomori-ol-switch" role="switch" aria-label="Activar portadas externas de Open Library"><span>Portadas externas · Open Library</span></label><span class="tomori-ol-status" role="status"></span><small>Experimental: derechos comerciales pendientes · <a href="https://openlibrary.org/dev/docs/api/covers" target="_blank" rel="noopener noreferrer">Fuente</a></small>`;
+    container.innerHTML = `<label class="tomori-ol-label"><input type="checkbox" class="tomori-ol-switch" role="switch" aria-label="Activar portadas externas de Open Library"><span>Portadas externas · Open Library</span></label><span class="tomori-ol-status" role="status"></span><small>Si Open Library no tiene la imagen exacta, queda la portada genérica. Derechos comerciales no comprobados · <a href="https://openlibrary.org/dev/docs/api/covers" target="_blank" rel="noopener noreferrer">Fuente</a></small>`;
+    // Consulta directa de comprobación, independiente de la carga automática.
+    // Nunca se usa para sustituir una edición por otra.
+    const sample = eligibleISBNs()[0];
+    if (sample) {
+      const a = document.createElement('a');
+      a.href = coverUrl(sample); a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.className = 'tomori-ol-check';
+      a.textContent = 'Comprobar portada por ISBN';
+      a.title = `Abrir solicitud exacta para el ISBN ${sample}`;
+      container.appendChild(a);
+    }
     footer.appendChild(container);
     container.querySelector('input').addEventListener('change', e => applySwitch(e.target.checked));
     applySwitch(enabled, false);

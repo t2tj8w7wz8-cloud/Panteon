@@ -24,3 +24,7 @@
 .tomori-ol-control small { font: inherit; opacity: .75; }
 .tomori-ol-control a { color: inherit; text-decoration: underline; }
 .tomori-ol-control :focus-visible { outline: 2px solid #C62828; outline-offset: 3px; }
+
+/* Diagnóstico experimental visible solo junto al interruptor del footer. */
+.tomori-ol-status {flex-basis:100%; font-weight:500; font-size:12px;}
+.tomori-ol-check{font-size:12px;color:inherit;text-decoration:underline;}

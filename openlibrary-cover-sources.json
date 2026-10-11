@@ -1,5 +1,5 @@
 {
-  "feature": "tomori-openlibrary-covers-experimental-v1",
+  "feature": "tomori-openlibrary-covers-experimental-v2-diagnostics",
   "enabledByDefault": false,
   "source": {
     "provider": "Open Library Covers API",
@@ -23,8 +23,79 @@
       "imageUrl": "https://covers.openlibrary.org/b/isbn/9789878191294-M.jpg?default=false",
       "imageAvailability": "not_preverified; runtime 404/failed request falls back to generic cover",
       "rightsStatus": "commercial_authorization_not_confirmed"
+    },
+    {
+      "catalogVolumeId": "volume:ivrea-ar-takopi-b6:001",
+      "editionId": "edition:ivrea-ar-takopi-b6",
+      "isbn13": "9788419816566",
+      "title": "El pecado original de Takopi",
+      "volumeNumber": 1,
+      "publisher": "Editorial Ivrea Argentina",
+      "bibliographicSource": "https://www.mercadolibre.cl/el-pecado-original-de-takopi-1-de-taizan5-vol-1-editorial-ivrea-tapa-blanda-edicion-1-en-espanol-2023/p/MLC24405934",
+      "bibliographicVerification": "retail_listing_correspondence_subject_to_editorial_review",
+      "imageProvider": "Open Library Covers API",
+      "imageUrl": "https://covers.openlibrary.org/b/isbn/9788419816566-M.jpg?default=false",
+      "imageAvailability": "unknown; determined per visitor request only, falls back to generic",
+      "rightsStatus": "commercial_authorization_not_confirmed"
+    },
+    {
+      "catalogVolumeId": "volume:ivrea-ar-takopi-b6:002",
+      "editionId": "edition:ivrea-ar-takopi-b6",
+      "isbn13": "9788410007215",
+      "title": "El pecado original de Takopi",
+      "volumeNumber": 2,
+      "publisher": "Editorial Ivrea Argentina",
+      "bibliographicSource": "https://simple.ripley.cl/el-pecado-original-de-takopi-02-ivrea-argentina-mpm10000595960",
+      "bibliographicVerification": "retail_listing_correspondence_subject_to_editorial_review",
+      "imageProvider": "Open Library Covers API",
+      "imageUrl": "https://covers.openlibrary.org/b/isbn/9788410007215-M.jpg?default=false",
+      "imageAvailability": "unknown; determined per visitor request only, falls back to generic",
+      "rightsStatus": "commercial_authorization_not_confirmed"
+    },
+    {
+      "catalogVolumeId": "volume:ivrea-ar-one-piece-tankoubon:108",
+      "editionId": "edition:ivrea-ar-one-piece-tankoubon",
+      "isbn13": "9791388298875",
+      "title": "One Piece",
+      "volumeNumber": 108,
+      "publisher": "Editorial Ivrea Argentina",
+      "bibliographicSource": "https://simple.ripley.cl/one-piece-108-ivrea-argentina-mpm10003532091",
+      "bibliographicVerification": "retail_listing_correspondence_subject_to_editorial_review",
+      "imageProvider": "Open Library Covers API",
+      "imageUrl": "https://covers.openlibrary.org/b/isbn/9791388298875-M.jpg?default=false",
+      "imageAvailability": "unknown; determined per visitor request only, falls back to generic",
+      "rightsStatus": "commercial_authorization_not_confirmed"
+    },
+    {
+      "catalogVolumeId": "volume:ivrea-ar-slam-dunk-deluxe:002",
+      "editionId": "edition:ivrea-ar-slam-dunk-deluxe",
+      "isbn13": "9788418837135",
+      "title": "Slam Dunk · Edición Deluxe / New Edition",
+      "volumeNumber": 2,
+      "publisher": "Editorial Ivrea Argentina",
+      "bibliographicSource": "https://www.neozeon.cl/mangas/ivrea_arg/slam_dunk?tome_number=2",
+      "bibliographicVerification": "retail_listing_correspondence_subject_to_editorial_review",
+      "imageProvider": "Open Library Covers API",
+      "imageUrl": "https://covers.openlibrary.org/b/isbn/9788418837135-M.jpg?default=false",
+      "imageAvailability": "unknown; determined per visitor request only, falls back to generic",
+      "rightsStatus": "commercial_authorization_not_confirmed"
+    },
+    {
+      "catalogVolumeId": "volume:ivrea-ar-solanin-integral:001",
+      "editionId": "edition:ivrea-ar-solanin-integral",
+      "isbn13": "9788417920845",
+      "title": "Solanin",
+      "volumeNumber": 1,
+      "publisher": "Editorial Ivrea Argentina",
+      "bibliographicSource": "https://www.mercadolibre.com.ar/solanin--inio-asano--ivrea-argentina--tomo-unico/up/MLAU3086263174",
+      "bibliographicVerification": "retail_listing_correspondence_subject_to_editorial_review",
+      "imageProvider": "Open Library Covers API",
+      "imageUrl": "https://covers.openlibrary.org/b/isbn/9788417920845-M.jpg?default=false",
+      "imageAvailability": "unknown; determined per visitor request only, falls back to generic",
+      "rightsStatus": "commercial_authorization_not_confirmed"
     }
   ],
-  "volumesWithoutVerifiableISBN13": 8,
-  "rights": "Do not enable for commercial deployment without separate legal review."
+  "volumesWithoutVerifiableISBN13": 3,
+  "rights": "Do not enable for commercial deployment without separate legal review.",
+  "note": "ISBN source is metadata provenance, not authorization to display the cover; no cover has been independently verified as available."
 }
