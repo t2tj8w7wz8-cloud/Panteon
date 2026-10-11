@@ -1,0 +1,185 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pantéon v1.1 · Perfil de serie</title><link rel="stylesheet" href="base.css"><link rel="stylesheet" href="extra.css?v=1.1-perfil-prueba-19">
+<style id="panteon-cta-sombra-v11-p13">
+/* Estilo de respaldo local: visible aunque Safari utilice un CSS en caché. */
+.more-wrap #catalogMore,
+.more-wrap #volumeMore,
+.ranking-block .ranking-more-wrap .ranking-more {
+  color:#111111;
+  background:#D9D5CD;
+  border:0;
+  border-radius:8px;
+  box-shadow:4px 4px 0 #111111 !important;
+  position:relative;
+  overflow:visible;
+}
+.more-wrap {padding-bottom:10px;}
+.ranking-block .ranking-more-wrap {padding-bottom:14px;}
+</style>
+
+<style id="panteon-perfil-controles-prueba17">
+/* PERFIL DE SERIE · PRUEBA 17
+   Controles aprobados: gris #D9D5CD, texto negro, sin bordes,
+   radio de 9px. Scope: solo Perfil, sin tocar menú, viñetas ni
+   Feedback original y aprobado. */
+body[data-page="perfil de serie"] main .button{
+  background:#D9D5CD;
+  color:#111111;
+  border:0;
+  border-radius:9px;
+  font-weight:800;
+  box-sizing:border-box;
+  min-height:40px;
+  padding:10px 16px;
+  cursor:pointer;
+  box-shadow:none;
+}
+body[data-page="perfil de serie"] main .button.primary,
+body[data-page="perfil de serie"] main .button.active{
+  background:#D9D5CD;
+  color:#111111;
+  border:0;
+}
+body[data-page="perfil de serie"] main .button.active,
+body[data-page="perfil de serie"] main .button[aria-pressed="true"]{
+  box-shadow:inset 0 -3px 0 #C62828;
+}
+body[data-page="perfil de serie"] main .button:hover:not(:disabled){background:#cbc7bf}
+body[data-page="perfil de serie"] main .button:focus-visible{
+  outline:3px solid #111111;outline-offset:3px;
+}
+/* Solo «Mostrar más tomos» es un botón independiente: conserva su sombra. */
+body[data-page="perfil de serie"] #volumeMore{
+  background:#D9D5CD;
+  color:#111111;
+  border:0;
+  border-radius:9px;
+  box-shadow:4px 4px 0 #111111 !important;
+  margin-bottom:7px;
+}
+/* Las tarjetas del Perfil heredan la geometría y controles de Rankings. */
+body[data-page="perfil de serie"] #volumeResults .volume-card .volume-actions .action,
+body[data-page="perfil de serie"] #volumeResults .volume-card .volume-actions .action.active,
+body[data-page="perfil de serie"] #volumeResults .volume-card .volume-actions .action[aria-pressed="true"]{
+  background:#D9D5CD;color:#111111;border:0;border-radius:9px;
+}
+body[data-page="perfil de serie"] #volumeResults .volume-card .volume-actions .follow,
+body[data-page="perfil de serie"] #volumeResults .volume-card .volume-actions .follow.active,
+body[data-page="perfil de serie"] #volumeResults .volume-card .volume-actions .follow[aria-pressed="true"]{
+  background:#D9D5CD;color:#C62828;border:0;border-radius:9px;
+}
+/* Los sellos de valoración ya vienen de .launch-volume-grid en extra.css:
+   superpuestos a la portada, gris al 30% y estrella roja. */
+</style>
+
+<style id="panteon-perfil-vinetas-prueba19">
+/* Perfil de serie — viñetas con contornos SVG completos y 12px libres
+   entre bordes paralelos. Tipografía proporcional al área disponible,
+   como la regla aprobada del Catálogo: ambas viñetas son equivalentes. */
+body[data-page="perfil de serie"] .profile-panels{
+  display:block;position:relative;isolation:isolate;
+  box-sizing:border-box;overflow:hidden;
+  padding:12px;background:#FFFFFF;border:2px solid var(--ink);
+  box-shadow:4px 4px 0 var(--ink);
+}
+body[data-page="perfil de serie"] .profile-stage{
+  position:relative;width:100%;height:100%;min-width:0;
+  --profile-title-size:2.2rem;
+}
+body[data-page="perfil de serie"] .profile-geometry{
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+  z-index:0;pointer-events:none;overflow:visible;
+}
+body[data-page="perfil de serie"] .profile-geometry .profile-shape{
+  fill:var(--ivory);stroke:var(--ink);stroke-width:2;
+  stroke-linejoin:miter;vector-effect:none;
+}
+body[data-page="perfil de serie"] .profile-stage .profile-tile{
+  position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;
+  border:0;background:transparent;color:var(--ink);border-radius:0;
+  font-size:var(--profile-title-size);font-weight:900;line-height:1.1;
+  z-index:1;display:flex;align-items:center;cursor:pointer;
+  transition:none;box-sizing:border-box;
+}
+body[data-page="perfil de serie"] .profile-stage .profile-tile:first-child,
+body[data-page="perfil de serie"] .profile-stage .profile-tile:last-child{
+  border:0;margin:0;padding:0;clip-path:var(--profile-hit-area);
+}
+body[data-page="perfil de serie"] .profile-stage .profile-tile span{
+  display:flex;justify-content:center;align-items:center;
+  width:50%;height:100%;pointer-events:none;white-space:nowrap;
+}
+body[data-page="perfil de serie"] .profile-stage .profile-tile-volumes span{
+  margin-left:auto;transform:translateX(7px);
+}
+body[data-page="perfil de serie"] .profile-stage .profile-tile-discover span{
+  transform:translateX(-7px);
+}
+body[data-page="perfil de serie"] .profile-stage .profile-tile:focus-visible{
+  outline:3px solid var(--red);outline-offset:-4px;
+}
+/* Excepción aprobada: «Seguir serie» es una acción principal.
+   Solamente su texto es rojo; fondo gris y ausencia de sombra se mantienen. */
+body[data-page="perfil de serie"] main #followSeries,
+body[data-page="perfil de serie"] main #followSeries.active,
+body[data-page="perfil de serie"] main #followSeries[aria-pressed="true"]{
+  background:#D9D5CD;color:#C62828;border:0;box-shadow:none;
+}
+</style>
+</head><body data-page="perfil de serie"><header class="header" id="header"><div class="bar"><span class="small-brand"><span aria-hidden="true" class="compact-logo">P</span>PANTÉON</span><button aria-expanded="false" aria-label="Abrir menú" class="menu-button" id="menuButton"><i></i><i></i><i></i></button></div><div class="hero"><div aria-label="Espacio para el futuro logo" class="logo-placeholder">LOGO</div><h1 id="pageHeading">PERFIL DE SERIE</h1><p>Tu colección, tu historia</p></div></header><nav id="menu" class="menu" aria-label="Menú principal"><button id="closeMenu" class="menu-close" aria-label="Cerrar menú">×</button><div class="menu-inner"><div class="menu-row diagonal upper"><button class="menu-tile l" data-dest="catalogo">Catálogo</button><button class="menu-tile r" data-dest="tienda">Tienda</button></div><div class="menu-row middle"><button class="menu-tile full" data-dest="sesion">Iniciar sesión / Registrarse</button></div><div class="menu-row diagonal lower"><button class="menu-tile bl" data-dest="feedback">Feedback</button><button class="menu-tile br" data-dest="coleccion">Mi colección</button></div></div></nav><main class="wrap"><section class="section"><div class="profile-panels" aria-label="Navegación del perfil de serie">
+  <div class="profile-stage">
+    <svg class="profile-geometry" id="profileGeometry" viewBox="0 0 100 100" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+      <polygon class="profile-shape" id="profileShapeDiscover" />
+      <polygon class="profile-shape" id="profileShapeVolumes" />
+    </svg>
+    <button class="profile-tile profile-tile-discover" data-scroll="descubre" aria-label="Ir a Descubre esta historia"><span>DESCUBRE</span></button>
+    <button class="profile-tile profile-tile-volumes" data-scroll="tomos" aria-label="Ir a Todos los tomos"><span>TOMOS</span></button>
+  </div>
+</div><p class="note">Ficha demostrativa · contenido editorial y valoraciones ficticios.</p></section><section class="section"><div class="profile-overview"><div class="profile-cover" role="img" aria-label="Portada provisional negra"><div class="rating-seal" id="generalRating">★ — / 5</div></div><div class="narrator"><h2 id="seriesTitle">Serie</h2><div class="metadata" id="seriesMeta"></div><button class="button primary" id="followSeries">Seguir serie</button><h3 style="margin-top:24px">Valoraciones detalladas</h3><div id="ratingDetails"></div><p class="note" id="ratingCount"></p><button class="button" id="rateSeries">Valorar esta serie</button><div id="ratingEditor" hidden><p class="note">Puntúa cada criterio de 1 a 5 estrellas. Puedes editarlo después.</p><div id="ratingInputs"></div><button class="button primary" id="saveRating">Guardar valoración</button></div></div></div></section><section class="section" id="progreso"><h2>Mi progreso</h2><div class="narrator" id="progressBox"></div></section><section class="section" id="descubre"><h2>Descubre esta historia</h2><div class="story-grid"><div class="narrator"><h3>Sinopsis del tomo 01</h3><p>Texto de muestra: una aventura comienza cuando sus protagonistas descubren una señal imposible de explicar. Este contenido no es una sinopsis editorial oficial.</p><p class="note">Editorial de ejemplo: <span id="synopsisPublisher"></span>. Sinopsis ilustrativa, no atribuida a la editorial.</p></div><div class="narrator"><h3>¿Cómo definirías este manga en una frase?</h3><p class="note">Frases y votos ficticios · máximo 160 caracteres · sin spoilers · una frase editable por usuario.</p><form class="quote-form" id="quoteForm"><input class="search-field" id="quoteText" maxlength="160" placeholder="Tu frase sin spoilers…" required><button class="button primary" type="submit">Publicar / editar</button></form><div id="quotes"></div><button class="button" id="moreQuotes">Ver más frases</button></div></div></section><section class="section" id="tomos"><h2>Todos los tomos</h2><p class="note">24 tomos de muestra · selecciona «Lo tengo» para actualizar tu progreso.</p><div class="controls"><input class="search-field" id="volumeSearch" placeholder="Buscar tomo por número (ej. 15)" inputmode="numeric"><select class="control" id="volumeSort"><option value="recent">Más reciente</option><option value="old">Más antiguo</option><option value="rated">Mejor valorado</option><option value="collected">Más coleccionado</option></select><select class="control" id="volumeFilter"><option value="all">Todos</option><option value="owned">Los que tengo</option><option value="wanted">Lo que quiero</option><option value="missing">Los que me faltan</option></select></div><div id="volumeResults" class="cards volume-grid catalog-grid launch-volume-grid"></div><div class="more-wrap"><button class="button" id="volumeMore">Mostrar más tomos</button></div></section>
+<!-- PANTÉON · Feedback global: bloque original aprobado de Inicio. -->
+<section class="section" id="feedback"><h2>Feedback</h2><div class="feedback"><h3>Ayúdanos a mejorar Pantéon</h3><p>Cuéntanos qué te gustaría encontrar en la plataforma. Formulario demostrativo.</p><form id="feedbackForm"><textarea required placeholder="Tu comentario"></textarea><button type="submit">Enviar comentario</button></form></div></section>
+</main><footer class="site-footer">PANTÉON · Laboratorio v1.1 · Datos ilustrativos · <a href="inicio.html">Inicio</a> · <a href="catalogo.html">Catálogo</a></footer><div id="toast" class="toast" role="status"></div><script src="data.js"></script><script src="app.js?v=1.1-perfil-prueba-19" defer></script>
+<script id="panteon-perfil-geometria-prueba19">
+/* Dos viñetas de perfil — cortes complementarios de 45°.
+   Los 12 px son la distancia libre perpendicular entre bordes de 2 px. */
+(function(){
+  const stage=document.querySelector('.profile-stage');
+  if(!stage)return;
+  const NS='http://www.w3.org/2000/svg';
+  const shapes=[document.getElementById('profileShapeDiscover'),document.getElementById('profileShapeVolumes')];
+  const buttons=[stage.querySelector('.profile-tile-discover'),stage.querySelector('.profile-tile-volumes')];
+  function draw(){
+    const w=stage.clientWidth,h=stage.clientHeight;
+    if(w<60||h<30)return;
+    const svg=document.getElementById('profileGeometry');
+    svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+    /* Al separar las rectas centrales (12+2) px, queda un hueco real de 12 px. */
+    const stroke=2,freeGap=12;
+    const halfOffset=(stroke+freeGap)*Math.SQRT2/2;
+    const top=1,bottom=h-1,run=bottom-top;
+    const mid=w/2;
+    const leftTop=mid+run/2-halfOffset,leftBottom=mid-run/2-halfOffset;
+    const rightTop=mid+run/2+halfOffset,rightBottom=mid-run/2+halfOffset;
+    const left=[[1,1],[leftTop,top],[leftBottom,bottom],[1,bottom]];
+    const right=[[rightTop,top],[w-1,top],[w-1,bottom],[rightBottom,bottom]];
+    const points=(coords)=>coords.map(([x,y])=>`${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+    [left,right].forEach((coords,i)=>{
+      shapes[i].setAttribute('points',points(coords));
+      buttons[i].style.clipPath='polygon('+coords.map(([x,y])=>`${x.toFixed(2)}px ${y.toFixed(2)}px`).join(',')+')';
+      buttons[i].onmouseenter=()=>shapes[i].setAttribute('fill','#ebe6dc');
+      buttons[i].onmouseleave=()=>shapes[i].removeAttribute('fill');
+      buttons[i].onfocus=()=>shapes[i].setAttribute('fill','#ebe6dc');
+      buttons[i].onblur=()=>shapes[i].removeAttribute('fill');
+    });
+    /* Proporción de SERIES en Catálogo. «DESCUBRE» es la referencia más larga;
+       ambas viñetas usan la misma escala por tener igual tamaño. */
+    const maximum=35.2;
+    const availableHalf=w/2-24;
+    const proportional=Math.min(maximum,h*.27,w*.064,availableHalf/5.4);
+    stage.style.setProperty('--profile-title-size',Math.max(17,proportional).toFixed(2)+'px');
+  }
+  draw();
+  if('ResizeObserver' in window)new ResizeObserver(draw).observe(stage);
+  else window.addEventListener('resize',draw);
+})();
+</script>
+</body></html>
