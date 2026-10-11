@@ -20,11 +20,11 @@ function drawTileGeometries(){
     const cut=Math.min(h*.36,44,w*.20), pad=1.5,type=b.dataset.geometry;
     const left=type.startsWith('left');const a=type.endsWith('a');
     let pts;
-    if(page==='perfil de usuario' && !left){
+    if((page==='perfil de usuario'||page==='mi colección') && !left){
       // Las diagonales de ambas viñetas son PARALELAS.
       // La silueta derecha se prolonga hacia la izquierda dentro del hueco
       // recortado de la izquierda; así el espacio visible es realmente 12px.
-      // No modificar la geometría escalonada aprobada de Mi colección.
+      // Mantener la forma escalonada y su separación real de 12 px.
       pts=a?[[-pad,pad],[w-pad,pad],[w-pad,h-pad],[-cut-pad,h-pad]]:
             [[-cut-pad,pad],[w-pad,pad],[w-pad,h-pad],[-pad,h-pad]];
     }else if(left)pts=a?[[pad,pad],[w-pad,pad],[w-cut,h-pad],[pad,h-pad]]:[[pad,pad],[w-cut,pad],[w-pad,h-pad],[pad,h-pad]];
@@ -114,7 +114,8 @@ function initCollection(){
   switch(b.dataset.personalTile){
    case 'series':onlyCompleted=false;seriesCount=4;renderMySeries();jump('misSeries');break;
    case 'completed':onlyCompleted=true;seriesCount=4;renderMySeries();jump('misSeries');break;
-   case 'volumes':case 'recent':jump('misTomos');break;
+   case 'volumes':jump('misTomos');break;
+   case 'wishlist':location.href='lo-quiero.html';break;
   }
  }));
  renderMySeries();renderMyVolumes();

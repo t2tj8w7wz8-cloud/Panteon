@@ -135,3 +135,10 @@ body[data-page="perfil de usuario"] #followingClose{
   border-radius:9px;
   box-shadow:4px 4px 0 #111111;
 }
+
+/* Mi colección — separación real de 12 px entre los cortes diagonales.
+   El contorno derecho ocupa el espacio que libera el corte izquierdo,
+   conservando escalonamiento, altura y bordes de 2 px. */
+body[data-page="mi colección"] .collector-tiles-collection .collector-tile-shape {
+  overflow:visible;
+}
