@@ -20,7 +20,14 @@ function drawTileGeometries(){
     const cut=Math.min(h*.36,44,w*.20), pad=1.5,type=b.dataset.geometry;
     const left=type.startsWith('left');const a=type.endsWith('a');
     let pts;
-    if(left)pts=a?[[pad,pad],[w-pad,pad],[w-cut,h-pad],[pad,h-pad]]:[[pad,pad],[w-cut,pad],[w-pad,h-pad],[pad,h-pad]];
+    if(page==='perfil de usuario' && !left){
+      // Las diagonales de ambas viñetas son PARALELAS.
+      // La silueta derecha se prolonga hacia la izquierda dentro del hueco
+      // recortado de la izquierda; así el espacio visible es realmente 12px.
+      // No modificar la geometría escalonada aprobada de Mi colección.
+      pts=a?[[-pad,pad],[w-pad,pad],[w-pad,h-pad],[-cut-pad,h-pad]]:
+            [[-cut-pad,pad],[w-pad,pad],[w-pad,h-pad],[-pad,h-pad]];
+    }else if(left)pts=a?[[pad,pad],[w-pad,pad],[w-cut,h-pad],[pad,h-pad]]:[[pad,pad],[w-cut,pad],[w-pad,h-pad],[pad,h-pad]];
     else pts=a?[[cut,pad],[w-pad,pad],[w-pad,h-pad],[pad,h-pad]]:[[pad,pad],[w-pad,pad],[w-pad,h-pad],[cut,h-pad]];
     svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.setAttribute('preserveAspectRatio','none');poly.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
   });
@@ -56,7 +63,7 @@ function renderFollowing(){
  $('#followingResults').innerHTML=list.slice(0,followCount).map(renderSeriesCard).join('')||empty('Todavía no sigues ninguna serie.');
  $('#followingMore').hidden=followCount>=list.length;
 }
-function openFollowing(){const panel=$('#followingView');panel.hidden=false;renderFollowing();jump('followingView')}
+function openFollowing(){renderFollowing();jump('followingView')}
 function setupUserSettings(){
  const s=C.read();$('#userNameInput').value=s.user.name;
  $('#userTitleSelect').innerHTML=s.user.unlocked.map(t=>`<option value="${escapeText(t)}" ${t===s.user.title?'selected':''}>${escapeText(t)}</option>`).join('');
@@ -77,7 +84,7 @@ function setupUserSettings(){
 function initProfileUser(){
  setupUserSettings();
  $('#followingMore').onclick=()=>{followCount+=4;renderFollowing()};
- $('#followingClose').onclick=()=>{$('#followingView').hidden=true;jump('activityRecent')};
+ $('#followingClose').onclick=()=>{jump('header')};
  $('#activityMore').onclick=()=>{activityCount+=4;renderTimeline()};
  $('#activityAll').onclick=openHistory;
  $$('.collector-tile').forEach(b=>b.addEventListener('click',()=>{

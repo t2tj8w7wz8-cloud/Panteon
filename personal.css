@@ -118,3 +118,20 @@ body[data-page="lo quiero"] .volume-card .volume-actions .action{color:#111;back
 }
 @media(max-width:355px){.collector-stat strong{font-size:.61rem}.collector-stat small{font-size:.59rem}.collector-tile{font-size:.75rem}}
 .collector-data-label{margin:17px 0 0}
+
+/* Corrección visual exclusiva del Perfil de usuario — prueba 07.
+   Las diagonales de las viñetas contiguas conservan el hueco REAL de 12px,
+   sin cambiar la cuadrícula, su altura, colores ni los cortes aprobados.
+   El SVG debe poder dibujar la parte complementaria fuera de su viewport. */
+body[data-page="perfil de usuario"] .collector-tiles-profile .collector-tile-shape{
+  overflow:visible;
+}
+/* La sección SIGUIENDO ya es permanente. 'Volver al perfil' regresa arriba,
+   sin ocultar la lista; estilo estándar de botón secundario independiente. */
+body[data-page="perfil de usuario"] #followingClose{
+  color:#111111 !important;
+  background:#D9D5CD;
+  border:0;
+  border-radius:9px;
+  box-shadow:4px 4px 0 #111111;
+}
