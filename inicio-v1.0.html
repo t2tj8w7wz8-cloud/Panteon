@@ -376,7 +376,7 @@
 <section class="section" id="organiza"><h2>Organiza tu colección</h2><div class="organize"><div class="organize-grid"><svg id="organizeGeometry" class="organize-geometry" aria-hidden="true"></svg><div class="organize-tile" data-dest="coleccion"><p>Organiza tus tomos y descubre cuáles te faltan.</p><h3>Mi colección</h3></div><div class="organize-tile" data-dest="quiero"><h3>Lo quiero</h3><p>Guarda los tomos que deseas conseguir.</p></div></div><div class="organize-series" data-dest="series" role="button" tabindex="0" aria-label="Explorar series que sigues"><h3>Series</h3><p>Busca dentro de las series que sigues y ve si hay alguna actualización.</p></div></div></section>
 <section class="section" id="feedback"><h2>Feedback</h2><div class="feedback"><h3>Ayúdanos a mejorar Tomori</h3><p>Cuéntanos qué te gustaría encontrar en la plataforma. Formulario demostrativo.</p><form id="feedbackForm"><textarea required placeholder="Tu comentario"></textarea><button type="submit">Enviar comentario</button></form></div></section>
 </main><footer><div class="wrap">TOMORI · Laboratorio v1.1 · Página de inicio</div></footer><div id="toast" class="toast" role="status"></div>
-<script src="data.js"></script><script src="collector.js"></script>
+<script src="data.js?v=tomori-internacional-experimental-12"></script><script src="collector.js?v=tomori-internacional-experimental-12"></script>
 <script>
 const header=document.getElementById('header'),menu=document.getElementById('menu'),menuButton=document.getElementById('menuButton'),toast=document.getElementById('toast');function updateHeader(){header.classList.toggle('compact',scrollY>90)}addEventListener('scroll',updateHeader,{passive:true});updateHeader();function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(window.t);window.t=setTimeout(()=>toast.classList.remove('show'),2300)}function toggleMenu(open){menu.classList.toggle('open',open);menuButton.setAttribute('aria-expanded',String(open))}menuButton.onclick=()=>toggleMenu(!menu.classList.contains('open'));document.getElementById('closeMenu').onclick=()=>toggleMenu(false);addEventListener('keydown',e=>{if(e.key==='Escape')toggleMenu(false)});/* Tomori · SVG negros para estados de los tomos (Inicio). */
 const tomoriHeartSvg='<svg class="tomori-state-icon tomori-heart" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>';
@@ -417,7 +417,7 @@ window.addEventListener('resize',drawPanels);requestAnimationFrame(drawPanels);
 </script><script id="prueba-seguir-series">
 /* Inicio comparte estado de seguimiento y valoraciones ilustrativas con Catálogo. */
 (function(){
- const key='panteon-lab-v11';
+ const key='tomori-internacional-experimental-v12';
  function read(){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return {}}}
  function refresh(){
    const state=read();const follow=state.follow||{};const ratings=state.ratings||{};
@@ -522,4 +522,4 @@ window.addEventListener('resize',drawPanels);requestAnimationFrame(drawPanels);
   window.addEventListener('tomori:state',refresh);
   refresh();
 })();
-</script></body></html>
+</script><script src="home-catalog.js?v=tomori-internacional-experimental-12" defer></script></body></html>

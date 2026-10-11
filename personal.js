@@ -44,7 +44,7 @@ function drawTileGeometries(){
 function renderSeriesCard(s){return serieCard(s)}
 function cardWithProgress(x){
   const base=renderSeriesCard(x);
-  const addition=`<div class="collector-card-progress"><div class="progress-caption">${x.owned} de ${x.total} tomos · ${x.percent}%</div><div class="progress-bar" role="progressbar" aria-label="Progreso de ${escapeText(x.name)}" aria-valuenow="${x.owned}" aria-valuemax="${x.total}"><div class="progress-fill" style="width:${x.percent}%"></div></div></div>`;
+  const addition=x.total>0?`<div class="collector-card-progress"><div class="progress-caption">${x.owned} de ${x.total} tomos declarados · ${x.percent}%</div><div class="progress-bar" role="progressbar" aria-label="Progreso de ${escapeText(x.name)}" aria-valuenow="${x.owned}" aria-valuemax="${x.total}"><div class="progress-fill" style="width:${x.percent}%"></div></div></div>`:`<div class="collector-card-progress"><div class="progress-caption">${x.owned} tomo(s) · total de edición sin verificar</div></div>`;
   return base.replace('<span class="series-rating"',addition+'<span class="series-rating"');
 }
 function volumeWithDate(v){return tomoCard(v,true).replace('<div class="volume-actions">',`<p class="collector-added-date">Añadido: ${escapeText(C.dateTime(v.addedAt))}</p><div class="volume-actions">`)}
