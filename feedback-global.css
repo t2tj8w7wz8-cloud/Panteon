@@ -1,0 +1,36 @@
+/* TOMORI · Feedback global aprobado · versión 1.1 · octubre 2026.
+   Componente común a Inicio, Catálogo, Perfil de serie,
+   Perfil de usuario, Mi colección y Lo quiero.
+   En próximas páginas: enlazar este archivo al FINAL de <head>,
+   después de base.css, extra.css y cualquier CSS propio de página.
+   No modificar la caja exterior, los títulos narrador ni sus sombras. */
+
+/* Campo de comentario: marfil, sin borde, esquinas redondeadas.
+   Conserva medidas, tipografía y distribución del formulario original. */
+#feedback .feedback form textarea {
+  background-color: #F3EFE7;
+  color: #111111;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: none;
+}
+#feedback .feedback form textarea::placeholder {
+  color: #6B6B6B;
+  opacity: 1;
+}
+/* Foco de teclado sin reintroducir un borde permanente. */
+#feedback .feedback form textarea:focus-visible {
+  outline: 2px solid #C62828;
+  outline-offset: 2px;
+}
+
+/* Acción de envío DENTRO de un recuadro: sin sombra y sin borde.
+   El rojo está reservado para el texto, según aprobación. */
+#feedback .feedback form button[type="submit"] {
+  background: #D9D5CD;
+  color: #C62828;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: none;
+  background-image: none;
+}
