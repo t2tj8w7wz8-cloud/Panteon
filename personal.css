@@ -1,0 +1,120 @@
+/* TOMORI · páginas 04–06, prueba de revisión. Solo afecta a las páginas nuevas.
+   Base, fichas, botones y menú aprobados siguen en base.css/extra.css. */
+body[data-page="perfil de usuario"],body[data-page="mi colección"],body[data-page="lo quiero"]{background:#F3EFE7}
+/* Headers 04/05 reutilizan la misma geometría/timing sticky global (450/330 → 72/64). */
+.collector-user-header .bar{position:relative}
+.collector-compact-identity{display:flex;align-items:center;gap:11px;opacity:0;transform:translateX(15px);pointer-events:none;transition:opacity .2s,transform .3s;max-width:calc(100% - 68px);min-width:0}
+.collector-user-header.compact .collector-compact-identity{opacity:1;transform:translateX(0)}
+.collector-compact-identity>div:last-child{display:flex;flex-direction:column;min-width:0;text-align:left}
+.collector-compact-identity strong{font-size:1rem;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.collector-compact-identity span{font-size:.73rem;color:#ddd;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.collector-avatar{display:grid;place-items:center;background:#D9D5CD;color:#111111;border:3px solid white;border-radius:50%;overflow:hidden;flex:none;font-weight:900}
+.collector-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+.collector-avatar::after{content:'☻';font-size:2rem}
+.collector-avatar.has-photo::after{display:none}
+.collector-avatar-large{width:128px;height:128px;margin-bottom:13px;box-shadow:4px 4px 0 #555}
+.collector-avatar-large::after{font-size:4.4rem}
+.collector-avatar-small{width:44px;height:44px;border-width:2px}
+.collector-avatar-small::after{font-size:1.4rem}
+.collector-user-hero{padding-bottom:36px}
+.collector-user-hero h1{font-size:clamp(2rem,4.5vw,3.1rem);letter-spacing:.015em;max-width:100%;overflow-wrap:anywhere}
+.collector-user-hero p{font-size:clamp(.95rem,1.6vw,1.22rem);color:#e4ded5;font-weight:700;margin:7px 0}
+.collector-nav-section{margin-bottom:28px}
+.collector-nav-shell{padding:12px;background:#fff;border:2px solid #111;box-shadow:4px 4px 0 #111;min-width:0}
+.collector-tiles{display:grid;gap:12px}
+.collector-tiles-profile{grid-template-columns:1fr 1fr;grid-template-rows:116px 116px}
+.collector-tiles-collection{grid-template-columns:3fr 2fr;grid-template-rows:116px 116px}
+.collector-tiles-collection .collector-tile:nth-child(3){grid-column:1;grid-row:2}
+.collector-tiles-collection .collector-tile:nth-child(4){grid-column:2;grid-row:2}
+/* Escalonamiento: filas con anchuras alternadas sin recrear otras páginas. */
+.collector-tiles-collection{grid-template-columns:1fr;grid-template-rows:116px 116px;gap:12px}
+.collector-tiles-collection::before{content:none}
+.collector-tiles-collection{display:grid;grid-template-columns:repeat(10,minmax(0,1fr))}
+.collector-tiles-collection .collector-tile:nth-child(1){grid-column:span 6;grid-row:1}
+.collector-tiles-collection .collector-tile:nth-child(2){grid-column:span 4;grid-row:1}
+.collector-tiles-collection .collector-tile:nth-child(3){grid-column:span 4;grid-row:2}
+.collector-tiles-collection .collector-tile:nth-child(4){grid-column:span 6;grid-row:2}
+.collector-tile{position:relative;display:grid;place-items:center;min-width:0;color:#111;font-size:clamp(1.05rem,2.3vw,1.8rem);font-weight:900;border:0;padding:14px 17px;background:transparent;cursor:pointer;isolation:isolate;white-space:nowrap}
+.collector-tile .collector-tile-shape{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.collector-tile-shape polygon{fill:#F3EFE7;stroke:#111;stroke-width:2;stroke-linejoin:miter}
+.collector-tile.active .collector-tile-shape polygon,.collector-tile:hover .collector-tile-shape polygon{fill:#ebe5da}
+.collector-tile:focus-visible{outline:3px solid #C62828;outline-offset:2px}
+.collector-tiles-wishlist{grid-template-columns:1fr 1fr;grid-template-rows:78px 150px}
+.collector-square-tile{border:2px solid #111;background:#F3EFE7;font-weight:900;font-size:clamp(1.05rem,2.2vw,1.75rem);color:#111;cursor:pointer}
+.collector-square-tile:first-child{grid-column:1 / -1}
+.collector-square-tile:hover,.collector-square-tile.active{background:#e8e1d5}
+.collector-square-tile.active{box-shadow:inset 0 -4px 0 #C62828}
+.collector-square-tile:focus-visible{outline:3px solid #C62828;outline-offset:2px}
+/* Recuadros narrador y estadísticas: fuente y geometría heredadas. */
+.collector-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.collector-stat{display:flex;flex-direction:column;justify-content:space-between;gap:10px;min-width:0}
+.collector-stat strong{font-size:clamp(1rem,1.8vw,1.4rem);font-weight:900;letter-spacing:.025em}
+.collector-stat>[data-stat]{font-size:clamp(2.4rem,4.8vw,4rem);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.collector-stat small{font-size:.78rem;color:#6B6B6B}
+.collector-narrator-title{display:table;max-width:100%;width:max-content;padding:11px 20px 12px;margin:0 0 24px!important;background:#fff;border:2px solid #111;box-shadow:4px 4px 0 #111;font-size:clamp(1.4rem,3vw,2.2rem)!important;font-weight:900;line-height:1.15;overflow-wrap:break-word}
+.collector-subtitle{margin:-6px 0 21px;color:#6B6B6B;font-size:1.04rem}
+.collector-timeline{border-left:3px solid #111;margin:16px 0 0 15px;padding-left:24px;display:grid;gap:16px}
+.collector-event{position:relative;background:white;border:2px solid #111;box-shadow:4px 4px 0 #111;padding:16px 18px;min-width:0}
+.collector-event:before{content:'';position:absolute;left:-33px;top:22px;width:13px;height:13px;background:#C62828;border:2px solid #111;border-radius:50%}
+.collector-event-icon{font-size:1.4rem;margin-right:8px;vertical-align:middle}
+.collector-event h3{display:inline;font-size:.97rem;line-height:1.5}
+.collector-event p{margin:8px 0 0;color:#6B6B6B;font-size:.85rem}
+.collector-settings-form{display:grid;gap:15px;max-width:680px}
+.collector-settings-form label{display:grid;gap:8px;font-size:.92rem;font-weight:800}
+.collector-settings-form label>.note{font-weight:400}
+.collector-settings-buttons{display:flex;flex-wrap:wrap;gap:10px}
+.collector-demo-settings{margin-top:20px;border-top:1px solid #D9D5CD;padding-top:12px}
+.collector-demo-settings .button{margin:0 7px 9px 0}
+.collector-inline-view{padding-bottom:12px}
+.collector-card-progress{margin:9px 0 2px}
+.collector-card-progress .progress-bar{margin-top:7px;height:11px}
+.collector-card-progress .progress-caption{font-size:.76rem;font-weight:800;line-height:1.3;color:#111}
+.collector-added-date{font-size:.7rem!important;color:#6B6B6B;margin-top:5px!important}
+.collector-wish-search{max-width:610px;margin-bottom:12px}
+.collector-wish-search label{display:block;font-size:.84rem;font-weight:700;margin-bottom:8px}
+.collector-wish-results .catalog-grid{margin:20px 0}
+.collector-wish-group{margin-top:24px}
+.collector-wish-group:first-child{margin-top:13px}
+.collector-wish-group .collector-narrator-title{font-size:clamp(1.1rem,2.3vw,1.65rem)!important}
+.collector-footer{margin-top:48px;border-top:2px solid #111;padding-top:12px}
+.collector-footer .wrap{max-width:1344px}
+.collector-footer #feedback{margin-top:20px;text-align:left}
+.collector-footer-links{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:center;margin:44px 0 16px}
+.collector-footer-links a{color:#111;font-weight:800;text-decoration:none}
+.collector-footer-links a:hover{text-decoration:underline}
+/* Solo en páginas nuevas: botones dentro de contenedores sin sombra, externos con 4px. */
+body[data-page="perfil de usuario"] .narrator .button,
+body[data-page="mi colección"] .narrator .button,
+body[data-page="lo quiero"] .narrator .button {color:#111;background:#D9D5CD;border:0;border-radius:9px;box-shadow:none!important}
+body[data-page="perfil de usuario"] .more-wrap .button,
+body[data-page="mi colección"] .more-wrap .button,
+body[data-page="lo quiero"] .more-wrap .button{color:#111;background:#D9D5CD;border:0;border-radius:9px;box-shadow:4px 4px 0 #111!important;margin:0 10px 10px 0}
+body[data-page="perfil de usuario"] .volume-card .volume-actions .action,
+body[data-page="mi colección"] .volume-card .volume-actions .action,
+body[data-page="lo quiero"] .volume-card .volume-actions .action{color:#111;background:#D9D5CD;border:0;box-shadow:none}
+@media(max-width:900px){.collector-tiles-profile{grid-template-rows:100px 100px}.collector-tiles-collection{grid-template-rows:100px 100px}.collector-tiles-wishlist{grid-template-rows:65px 130px}}
+@media(max-width:600px){
+ .collector-avatar-large{width:92px;height:92px;margin-bottom:8px}.collector-avatar-large::after{font-size:3rem}
+ .collector-avatar-small{width:38px;height:38px}.collector-user-hero{padding-bottom:20px}
+ .collector-user-hero h1{font-size:clamp(1.5rem,6vw,2.2rem)}
+ .collector-user-hero p{font-size:.95rem}
+ .collector-compact-identity{gap:8px}.collector-compact-identity strong{font-size:.83rem}.collector-compact-identity span{font-size:.63rem}
+ .collector-nav-shell{padding:9px}.collector-tiles{gap:12px}
+ .collector-tiles-profile{grid-template-rows:92px 92px}
+ .collector-tiles-collection{grid-template-rows:92px 92px}
+ .collector-tiles-wishlist{grid-template-rows:60px 122px}
+ .collector-tile{font-size:clamp(.76rem,2.9vw,1.05rem);padding:6px;white-space:normal;text-align:center;line-height:1.15}
+ .collector-square-tile{font-size:clamp(.88rem,4vw,1.18rem);padding:8px}
+ .collector-stats{gap:9px;grid-template-columns:repeat(3,minmax(0,1fr))}
+ .collector-stat{padding:10px;gap:9px;box-shadow:3px 3px 0 #111}
+ .collector-stat strong{font-size:.68rem;overflow-wrap:anywhere}
+ .collector-stat>[data-stat]{font-size:clamp(1.6rem,6vw,2.3rem)}
+ .collector-stat small{font-size:.65rem;line-height:1.25}
+ .collector-narrator-title{font-size:clamp(1.2rem,5vw,1.7rem)!important;padding:10px 14px 11px}
+ .collector-timeline{padding-left:17px;margin-left:13px}
+ .collector-event{padding:12px}.collector-event:before{left:-27px}
+ .collector-settings-buttons .button{font-size:.83rem}
+ .collector-footer-links{gap:10px;font-size:.85rem}
+}
+@media(max-width:355px){.collector-stat strong{font-size:.61rem}.collector-stat small{font-size:.59rem}.collector-tile{font-size:.75rem}}
+.collector-data-label{margin:17px 0 0}

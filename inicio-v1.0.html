@@ -376,6 +376,7 @@
 <section class="section" id="organiza"><h2>Organiza tu colección</h2><div class="organize"><div class="organize-grid"><svg id="organizeGeometry" class="organize-geometry" aria-hidden="true"></svg><div class="organize-tile" data-dest="coleccion"><p>Organiza tus tomos y descubre cuáles te faltan.</p><h3>Mi colección</h3></div><div class="organize-tile" data-dest="quiero"><h3>Lo quiero</h3><p>Guarda los tomos que deseas conseguir.</p></div></div><div class="organize-series" data-dest="series" role="button" tabindex="0" aria-label="Explorar series que sigues"><h3>Series</h3><p>Busca dentro de las series que sigues y ve si hay alguna actualización.</p></div></div></section>
 <section class="section" id="feedback"><h2>Feedback</h2><div class="feedback"><h3>Ayúdanos a mejorar Tomori</h3><p>Cuéntanos qué te gustaría encontrar en la plataforma. Formulario demostrativo.</p><form id="feedbackForm"><textarea required placeholder="Tu comentario"></textarea><button type="submit">Enviar comentario</button></form></div></section>
 </main><footer><div class="wrap">TOMORI · Laboratorio v1.1 · Página de inicio</div></footer><div id="toast" class="toast" role="status"></div>
+<script src="data.js"></script><script src="collector.js"></script>
 <script>
 const header=document.getElementById('header'),menu=document.getElementById('menu'),menuButton=document.getElementById('menuButton'),toast=document.getElementById('toast');function updateHeader(){header.classList.toggle('compact',scrollY>90)}addEventListener('scroll',updateHeader,{passive:true});updateHeader();function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(window.t);window.t=setTimeout(()=>toast.classList.remove('show'),2300)}function toggleMenu(open){menu.classList.toggle('open',open);menuButton.setAttribute('aria-expanded',String(open))}menuButton.onclick=()=>toggleMenu(!menu.classList.contains('open'));document.getElementById('closeMenu').onclick=()=>toggleMenu(false);addEventListener('keydown',e=>{if(e.key==='Escape')toggleMenu(false)});/* Tomori · SVG negros para estados de los tomos (Inicio). */
 const tomoriHeartSvg='<svg class="tomori-state-icon tomori-heart" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>';
@@ -491,4 +492,34 @@ window.addEventListener('resize',drawPanels);requestAnimationFrame(drawPanels);
   else window.addEventListener('resize',()=>rows.forEach(draw));
 })();
 </script>
-</body></html>
+<script id="tomori-6pages-sync" defer>
+/* Integración técnica mínima. Conserva intactos botones, tarjetas, estilos y animaciones de Inicio. */
+(function(){
+  const C=window.TomoriCollector;if(!C)return;
+  const releaseCards=[...document.querySelectorAll('#releases .volume-card')];
+  function getCardData(card){
+    const h=card.querySelector('.volume-info h3')?.textContent.trim()||'';
+    const match=h.match(/^(.*?)\s*·\s*Tomo\s*(\d+)/i);
+    return match?{name:match[1],id:match[1]+':'+Number(match[2])}:null;
+  }
+  function refresh(){
+    const s=C.read();
+    releaseCards.forEach(card=>{
+      const v=getCardData(card);if(!v)return;
+      card.querySelectorAll('[data-action]').forEach(b=>{
+        const kind=b.dataset.action.startsWith('want-')?'wanted':'owned';const active=!!s[kind][v.id];
+        b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));paintTomoButton(b);
+      });
+      const f=card.querySelector('[data-follow]');if(f){const active=!!s.follow[v.name];f.classList.toggle('active',active);f.setAttribute('aria-pressed',String(active));f.textContent=active?'✓':'+'}
+    });
+  }
+  document.addEventListener('click',e=>{
+    const mark=e.target.closest('#releases [data-action]');
+    if(mark){const v=getCardData(mark.closest('.volume-card'));if(!v)return;C.changeMark(v.id,mark.dataset.action.startsWith('want-')?'want':'own',mark.classList.contains('active'));refresh()}
+    const follow=e.target.closest('#releases [data-follow]');if(follow){const v=getCardData(follow.closest('.volume-card'));if(v){C.changeFollow(v.name,follow.classList.contains('active'));refresh()}}
+  });
+  window.addEventListener('storage',e=>{if(e.key===C.key)refresh()});
+  window.addEventListener('tomori:state',refresh);
+  refresh();
+})();
+</script></body></html>
