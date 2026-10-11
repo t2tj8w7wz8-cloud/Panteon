@@ -1,0 +1,26 @@
+/* TOMORI v1.2 — portadas opt-in. No altera dimensiones ni geometría existente. */
+.series-cover:has(> .tomori-ol-cover),
+.volume-cover:has(> .tomori-ol-cover),
+.profile-cover:has(> .tomori-ol-cover) { position: relative; }
+.series-cover > .tomori-ol-cover,
+.volume-cover > .tomori-ol-cover,
+.profile-cover > .tomori-ol-cover {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; object-fit: cover; object-position: center;
+  border: 0; margin: 0; padding: 0;
+  pointer-events: none; z-index: 0;
+}
+.volume-cover.tomori-ol-loaded > .volume-cover-rating,
+.profile-cover.tomori-ol-loaded > .rating-seal { position: absolute; z-index: 1; }
+.tomori-ol-control {
+  display: flex; justify-content: center; align-items: center;
+  gap: .35rem .8rem; flex-wrap: wrap;
+  margin: 12px auto 0; padding: 4px 12px;
+  font: 600 12px/1.5 Inter, Arial, sans-serif;
+  color: inherit; text-align: center;
+}
+.tomori-ol-label { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.tomori-ol-switch { width: 17px; height: 17px; margin: 0; accent-color: #111111; cursor: pointer; }
+.tomori-ol-control small { font: inherit; opacity: .75; }
+.tomori-ol-control a { color: inherit; text-decoration: underline; }
+.tomori-ol-control :focus-visible { outline: 2px solid #C62828; outline-offset: 3px; }

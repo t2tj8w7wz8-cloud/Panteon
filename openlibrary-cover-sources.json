@@ -1,0 +1,30 @@
+{
+  "feature": "tomori-openlibrary-covers-experimental-v1",
+  "enabledByDefault": false,
+  "source": {
+    "provider": "Open Library Covers API",
+    "apiDocumentation": "https://openlibrary.org/dev/docs/api/covers",
+    "urlTemplate": "https://covers.openlibrary.org/b/isbn/{ISBN13}-M.jpg?default=false",
+    "access": "Direct browser request only after user opt-in; no automatic bulk download",
+    "commercialUseRights": "unverified",
+    "licenseReview": "pending",
+    "note": "Availability through Open Library does not establish copyright ownership or a commercial image-use license."
+  },
+  "verifiedISBNsInCurrentPilot": [
+    {
+      "catalogVolumeId": "volume:ovni-ar-dragon-head-2en1:001",
+      "editionId": "edition:ovni-ar-dragon-head-2en1",
+      "isbn13": "9789878191294",
+      "title": "Dragon Head",
+      "volumeNumber": 1,
+      "publisher": "OVNI Press / OVNI Manga",
+      "bibliographicSource": "https://www.ovnipress.net/productos/dragon-head-vol-1/",
+      "imageProvider": "Open Library Covers API",
+      "imageUrl": "https://covers.openlibrary.org/b/isbn/9789878191294-M.jpg?default=false",
+      "imageAvailability": "not_preverified; runtime 404/failed request falls back to generic cover",
+      "rightsStatus": "commercial_authorization_not_confirmed"
+    }
+  ],
+  "volumesWithoutVerifiableISBN13": 8,
+  "rights": "Do not enable for commercial deployment without separate legal review."
+}
