@@ -1,0 +1,78 @@
+{
+  "feature": "Tomori Ivrea experiment v1",
+  "mode": "manual five cover records; no bulk scraping or image download",
+  "publicDeployment": "not_approved",
+  "note": "Displayed images remain on the publisher origin, direct display may require permission. Series art uses latest individually imported published volume only, and never substitutes older covers for missing newer volumes.",
+  "records": [
+    {
+      "volumeId": "volume:ivrea-ar-takopi-b6:001",
+      "editionId": "edition:ivrea-ar-takopi-b6",
+      "title": "El pecado original de Takopi",
+      "volume": 1,
+      "imageUrl": "https://www.ivrea.com.ar/wp-content/uploads/2024/04/elpecadodetakopi1.jpg",
+      "pageUrl": "https://www.ivrea.com.ar/titulo/el-pecado-original-de-takopi/",
+      "evidence": "Imagen principal oficial de Ivrea; además cargó en la prueba del usuario",
+      "provider": "Ivrea Argentina",
+      "status": "volume_correspondence_checked;image_runtime_not_guaranteed",
+      "commercialRights": "pending_authorization",
+      "hotlinkPermission": "pending_review",
+      "lastChecked": "2026-10-11"
+    },
+    {
+      "volumeId": "volume:ivrea-ar-takopi-b6:002",
+      "editionId": "edition:ivrea-ar-takopi-b6",
+      "title": "El pecado original de Takopi",
+      "volume": 2,
+      "imageUrl": "https://www.ivrea.com.ar/elpecadodetakopi/elpecadodetakopi2_chica.jpg",
+      "pageUrl": "https://www.ivrea.com.ar/anteriores1.htm",
+      "evidence": "Imagen oficial asociada explícitamente a EL PECADO ORIGINAL DE TAKOPI #2 en archivo Ivrea",
+      "provider": "Ivrea Argentina",
+      "status": "volume_correspondence_checked;image_runtime_not_guaranteed",
+      "commercialRights": "pending_authorization",
+      "hotlinkPermission": "pending_review",
+      "lastChecked": "2026-10-11"
+    },
+    {
+      "volumeId": "volume:ivrea-ar-solanin-integral:001",
+      "editionId": "edition:ivrea-ar-solanin-integral",
+      "title": "Solanin",
+      "volume": 1,
+      "imageUrl": "https://www.ivrea.com.ar/wp-content/uploads/2020/11/solanin-2.jpg",
+      "pageUrl": "https://www.ivrea.com.ar/titulo/solanin/",
+      "evidence": "Portada oficial que cargó en la prueba del usuario",
+      "provider": "Ivrea Argentina",
+      "status": "volume_correspondence_checked;image_runtime_not_guaranteed",
+      "commercialRights": "pending_authorization",
+      "hotlinkPermission": "pending_review",
+      "lastChecked": "2026-10-11"
+    },
+    {
+      "volumeId": "volume:ivrea-ar-slam-dunk-deluxe:002",
+      "editionId": "edition:ivrea-ar-slam-dunk-deluxe",
+      "title": "Slam Dunk (New Edition / Deluxe)",
+      "volume": 2,
+      "imageUrl": "https://ivrea.com.ar/slamdunk/slamdunk02_chica.jpg",
+      "pageUrl": "https://www.ivrea.com.ar/anteriores4.htm",
+      "evidence": "Imagen enlazada desde SLAM DUNK NEW EDITION #2 en el archivo editorial",
+      "provider": "Ivrea Argentina",
+      "status": "volume_correspondence_checked;image_runtime_not_guaranteed",
+      "commercialRights": "pending_authorization",
+      "hotlinkPermission": "pending_review",
+      "lastChecked": "2026-10-11"
+    },
+    {
+      "volumeId": "volume:ivrea-ar-one-piece-tankoubon:001",
+      "editionId": "edition:ivrea-ar-one-piece-tankoubon",
+      "title": "One Piece",
+      "volume": 1,
+      "imageUrl": "https://www.ivrea.com.ar/wp-content/uploads/2021/01/onepiece01.jpg",
+      "pageUrl": "https://www.ivrea.com.ar/titulo/one-piece/",
+      "evidence": "Imagen oficial principal del título One Piece, volumen 1",
+      "provider": "Ivrea Argentina",
+      "status": "volume_correspondence_checked;image_runtime_not_guaranteed",
+      "commercialRights": "pending_authorization",
+      "hotlinkPermission": "pending_review",
+      "lastChecked": "2026-10-11"
+    }
+  ]
+}
