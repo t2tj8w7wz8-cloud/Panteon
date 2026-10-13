@@ -1,0 +1,56 @@
+/* TOMORI · Acceso a Inicio desde las cinco páginas interiores.
+   Exclusivamente la barra superior; no altera headers, geometrías,
+   menús, tarjetas ni componentes aprobados. */
+.header .tm-home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  border-radius: 8px;
+}
+.header .tm-home-link:focus-visible {
+  outline: 3px solid #C62828;
+  outline-offset: 4px;
+}
+/* En las páginas normales el logo horizontal existente también es visible
+   antes del scroll y continúa siendo la marca al contraer el header. */
+.header .small-brand.tm-home-link { opacity: 1; }
+/* Header personal: espacio para logo, avatar/nombre y menú. */
+.collector-user-header .tm-home-left-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.collector-user-header .tm-home-left-group .collector-compact-identity {
+  min-width: 0;
+  max-width: none;
+  flex: 0 1 auto;
+}
+.collector-user-header .tm-home-link-personal {
+  min-width: 48px;
+  min-height: 44px;
+}
+.collector-user-header .tm-home-link-personal picture { display: block; line-height: 0; }
+.collector-user-header .tm-home-link-personal img {
+  display: block;
+  width: clamp(128px, 14vw, 170px);
+  height: auto;
+  object-fit: contain;
+}
+@media (max-width:600px) {
+  .collector-user-header .tm-home-left-group { gap: 10px; }
+  .collector-user-header .tm-home-link-personal {
+    width: 48px;
+    min-width: 48px;
+    height: 44px;
+  }
+  .collector-user-header .tm-home-link-personal img { width: 46px; }
+  .collector-user-header .tm-home-left-group .collector-compact-identity { min-width: 0; }
+}
