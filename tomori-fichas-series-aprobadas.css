@@ -1,0 +1,64 @@
+/* TOMORI · FICHAS DE SERIE PROPORCIONALES · APROBADO v1.3
+   Una columna en móvil (<=600px), tres en escritorio (>600px).
+   Solo afecta fichas de serie; no toca tarjetas de tomo ni el perfil grande.
+   No añade ni descarga imágenes; respeta el interruptor de portadas externas.
+   La imagen real fluye según su proporción natural y no se recorta.
+*/
+
+/* Una regla compartida para Inicio, Catálogo, Mi colección,
+   Siguiendo y cualquier ranking con fichas de serie. */
+.cards.series-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: start;
+}
+.cards.series-grid > .series-card,
+.cards.series-grid > .rank-wrap {
+  min-width: 0;
+  align-self: start;
+}
+.cards.series-grid .series-card {
+  min-width: 0;
+  align-self: start;
+  height: auto;
+}
+
+/* El fallback sin imagen conserva el fondo y la proporción originales.
+   Solo cuando un proveedor confirma una portada real dejamos que el alto
+   lo determine la imagen original, manteniendo el ancho de la columna. */
+.cards.series-grid .series-cover.tomori-ivrea-loaded,
+.cards.series-grid .series-cover.tomori-ol-loaded {
+  position: relative;
+  width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  background: transparent !important;
+  overflow: hidden;
+}
+.cards.series-grid .series-cover.tomori-ivrea-loaded > img.tomori-ivrea-cover,
+.cards.series-grid .series-cover.tomori-ol-loaded > img.tomori-ol-cover,
+.tomori-ivrea-crop .cards.series-grid .series-cover.tomori-ivrea-loaded > img.tomori-ivrea-cover {
+  position: static !important;
+  inset: auto !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100%;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  object-position: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  image-rendering: auto;
+}
+
+/* La tarjeta padre ya tiene border-radius y overflow:hidden aprobados.
+   No añadimos separaciones en la portada que generen bandas negras. */
+@media (max-width: 600px) {
+  .cards.series-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
