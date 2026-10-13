@@ -1,0 +1,19 @@
+﻿id,workId,publisher,market,editionName,format,totalPlanned,publishedCount,publishedVerifiedCount,verifiedVolumeCount,status,sourceUrl,verifiedAt
+edition:ivrea-ar-one-piece,work:one-piece,Editorial Ivrea Argentina,AR,Tankoubon con sobrecubierta,tankoubon,,109,109,112,ongoing,https://www.ivrea.com.ar/titulo/one-piece/,2026-10-13
+edition:ivrea-ar-takopi-b6,work:takopi,Editorial Ivrea Argentina,AR,"B6, dos tomos",b6,2,2,2,2,complete,https://www.ivrea.com.ar/titulo/el-pecado-original-de-takopi/,2026-10-13
+edition:ivrea-ar-chainsaw-man-tankoubon,work:chainsaw-man,Editorial Ivrea Argentina,AR,Tankoubon con sobrecubierta,tankoubon,24,24,6,6,complete,https://www.ivrea.com.ar/titulo/chainsaw-man/,2026-10-13
+edition:ivrea-ar-slam-dunk-deluxe,work:slam-dunk,Editorial Ivrea Argentina,AR,"Deluxe / New Edition, 20 tomos",deluxe,20,20,1,1,complete,https://www.ivrea.com.ar/titulo/slam-dunk/,2026-10-13
+edition:ivrea-ar-slam-dunk-tradicional,work:slam-dunk,Editorial Ivrea Argentina,AR,"Tradicional descatalogada, 31 tomos",tankoubon,31,31,0,0,out_of_print,https://www.ivrea.com.ar/titulo/slam-dunk/,2026-10-13
+edition:ivrea-ar-shaman-king-2en1,work:shaman-king,Editorial Ivrea Argentina,AR,Recopilatoria 2 en 1; tomo 17 triple,2in1,17,17,5,5,complete,https://www.ivrea.com.ar/titulo/shaman-king/,2026-10-13
+edition:planeta-es-one-piece-shonen,work:one-piece,Planeta Cómic,ES,Shonen individual,tankoubon,,113,113,114,ongoing,https://www.planetadelibros.com/serie-one-piece/7564,2026-10-13
+edition:planeta-es-one-piece-3en1,work:one-piece,Planeta Cómic,ES,Recopilatoria 3 en 1,3in1,,15,15,15,ongoing,https://www.planetadelibros.com/serie-one-piece-3-en-1/17015,2026-10-13
+edition:distrito-es-takopi-b6,work:takopi,Distrito Manga,ES,"B6, dos tomos",b6,2,2,2,2,complete,https://www.penguinlibros.com/es/manga-comic/314242-libro-el-pecado-original-de-takopi-1-shonen-9788419412447,2026-10-13
+edition:norma-es-chainsaw-man,work:chainsaw-man,Norma Editorial,ES,"Edición castellana, rústica",tankoubon,24,23,23,23,ongoing,https://www.normaeditorial.com/catalogo/manga/serie/chainsaw-man/albumes,2026-10-13
+edition:ivrea-es-slam-dunk-deluxe,work:slam-dunk,Editorial Ivrea España,ES,"Deluxe / New Edition, 20 tomos",deluxe,20,20,4,4,complete,https://www.editorialivrea.com/ESP/titulo/slam-dunk/,2026-10-13
+edition:ivrea-es-slam-dunk-kanzenban,work:slam-dunk,Editorial Ivrea España,ES,"Kanzenban, 24 tomos",kanzenban,24,24,6,6,complete,https://www.editorialivrea.com/ESP/titulo/slam-dunk/,2026-10-13
+edition:ivrea-es-slam-dunk-tradicional,work:slam-dunk,Editorial Ivrea España,ES,"Tradicional, 31 tomos",tankoubon,31,31,0,0,out_of_print,https://www.editorialivrea.com/ESP/titulo/slam-dunk/,2026-10-13
+edition:ivrea-es-shaman-king-2en1,work:shaman-king,Editorial Ivrea España,ES,"Recopilatoria 2 en 1, 17 tomos",2in1,17,17,2,2,complete,https://www.editorialivrea.com/ESP/titulo/shaman-king/,2026-10-13
+edition:panini-mx-one-piece,work:one-piece,Panini Manga México,MX,"Edición mexicana, números individuales",tankoubon,,113,6,6,ongoing,https://tiendapanini.com.mx/one-piece-n1,2026-10-13
+edition:panini-mx-chainsaw-man,work:chainsaw-man,Panini Manga México,MX,"Edición mexicana, números individuales",tankoubon,,23,18,18,ongoing,https://tiendapanini.com.mx/chainsaw-man-n1,2026-10-13
+edition:panini-mx-slam-dunk,work:slam-dunk,Panini Manga México,MX,"Edición mexicana, numeración individual",tankoubon,,,2,2,unknown,https://tiendapanini.com.mx/slam-dunk-n1,2026-10-13
+edition:panini-mx-shaman-king,work:shaman-king,Panini Manga México,MX,"Recopilatoria, 17 tomos (último 528 págs.)",2in1,17,17,7,7,complete,https://tiendapanini.com.mx/shaman-king-n1,2026-10-13
