@@ -1,0 +1,78 @@
+/* TOMORI · PERFIL DE SERIE v2.0 · Únicamente componentes autorizados. */
+html[data-serie-v2] body[data-page="perfil de serie"] #tomos[hidden],
+html[data-serie-v2] body[data-page="perfil de serie"] #descubre[hidden],
+html[data-serie-v2] body[data-page="perfil de serie"] #ediciones[hidden],
+html[data-serie-v2] body[data-page="perfil de serie"] #ultimosTomos[hidden]{display:none!important}
+body[data-page="perfil de serie"] .tm-editions-intro{margin-bottom:20px}
+/* Ediciones: mismo lenguaje que las fichas de serie aprobadas.
+   Imagen del tomo 01 ARRIBA e información ABAJO. No altera otras secciones. */
+body[data-page="perfil de serie"] .tm-edition-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start;
+}
+body[data-page="perfil de serie"] .tm-edition-card{
+ display:flex;flex-direction:column;align-self:start;
+ width:100%;min-width:0;height:auto;margin:0;padding:0;
+ background:#fff;color:#111;text-align:left;font:inherit;cursor:pointer;
+ border:1px solid #111;border-radius:24px;box-shadow:5px 5px 0 #111;
+ overflow:hidden;
+}
+body[data-page="perfil de serie"] .tm-edition-card:focus-visible{outline:3px solid #C62828;outline-offset:4px}
+body[data-page="perfil de serie"] .tm-edition-cover{
+ display:block;position:relative;width:100%;height:auto;aspect-ratio:1/1;
+ overflow:hidden;background:#111;
+}
+body[data-page="perfil de serie"] .tm-edition-cover.tm-edition-cover-has-image{
+ aspect-ratio:auto;background:transparent;
+}
+body[data-page="perfil de serie"] .tm-edition-cover > img{
+ display:block;position:relative;width:100%;height:auto;max-width:100%;
+ object-fit:contain;object-position:center;border:0;margin:0;padding:0;
+}
+body[data-page="perfil de serie"] .tm-edition-cover-fallback{
+ position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+ justify-content:center;gap:6px;color:#D9D5CD;padding:12px;text-align:center;
+}
+body[data-page="perfil de serie"] .tm-edition-cover-fallback strong{
+ color:#fff;font-size:clamp(.95rem,2vw,1.25rem);letter-spacing:.08em;
+}
+body[data-page="perfil de serie"] .tm-edition-cover-fallback small{
+ font-size:.73rem;line-height:1.35;max-width:210px;
+}
+body[data-page="perfil de serie"] .tm-edition-cover-has-image .tm-edition-cover-fallback{display:none}
+body[data-page="perfil de serie"] .tm-edition-info{
+ display:flex;flex-direction:column;gap:6px;min-width:0;
+ padding:clamp(1rem,2vw,1.5rem);background:#fff;
+}
+body[data-page="perfil de serie"] .tm-edition-info strong{
+ display:block;font-size:clamp(1.1rem,1.6vw,1.45rem);
+ line-height:1.25;margin-bottom:2px;overflow-wrap:anywhere;
+}
+body[data-page="perfil de serie"] .tm-edition-info span{
+ display:block;color:#6B6B6B;font-size:.9rem;line-height:1.42;
+ overflow-wrap:anywhere;
+}
+body[data-page="perfil de serie"] .tm-progress-choose{max-width:100%;width:100%;margin:8px 0 15px}
+body[data-page="perfil de serie"] .tm-progress-actions{margin-top:14px}
+body[data-page="perfil de serie"] .tm-series-back{margin-bottom:24px}
+body[data-page="perfil de serie"] #volumeSortNote{margin:-6px 0 14px}
+body[data-page="perfil de serie"] .tm-volume-controls>*{min-width:0}
+body[data-page="perfil de serie"] #volumeResults.cards.volume-grid.catalog-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+body[data-page="perfil de serie"] .tm-latest-grid.cards.volume-grid.catalog-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+body[data-page="perfil de serie"] .tm-quote-votes{margin-left:10px;color:#6B6B6B}
+@media(max-width:1050px){
+ body[data-page="perfil de serie"] .tm-latest-grid.cards.volume-grid.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:900px){
+ body[data-page="perfil de serie"] #volumeResults.cards.volume-grid.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body[data-page="perfil de serie"] .tm-volume-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ body[data-page="perfil de serie"] .tm-volume-controls>*{min-width:0;width:100%}
+}
+@media(max-width:600px){
+ body[data-page="perfil de serie"] .tm-edition-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+
+ body[data-page="perfil de serie"] #volumeResults.cards.volume-grid.catalog-grid,
+ body[data-page="perfil de serie"] .tm-latest-grid.cards.volume-grid.catalog-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ body[data-page="perfil de serie"] .tm-volume-controls{grid-template-columns:1fr 1fr}
+ body[data-page="perfil de serie"] .tm-volume-controls input{grid-column:1/-1}
+ body[data-page="perfil de serie"] #volumeEdition{grid-column:1/-1}
+}
