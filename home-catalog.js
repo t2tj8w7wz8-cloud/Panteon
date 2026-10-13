@@ -1,33 +1,69 @@
-/* EXPERIMENTAL EN RAÍZ · Se sustituyen fichas ilustrativas por registros importados.
-   Se preservan clases CSS, alturas, contornos y arquitectura HTML del Inicio. */
+/* TOMORI · Catálogo real v1.0 — Inicio.
+ * Mantiene las plantillas visuales aprobadas; sustituye únicamente su contenido.
+ * Sin compras, votos ni seguimientos demostrativos. Estado por edición.
+ */
 (function(){
- const C=window.TomoriCollector;if(!C)return;
- C.seedDemo();
- const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const series=SERIES.filter(s=>s.publishedVerifiedCount>0);
- const pub=VOLUMES.filter(v=>v.published);
- function paintSeries(container,items){if(!container)return;
- container.innerHTML=items.map(s=>`<article class="series-card" tabindex="0" role="button" data-series="${esc(s.name)}" aria-label="Abrir perfil de ${esc(s.name)}"><div class="series-cover" aria-label="Portada provisional"></div><div class="series-info"><h3>${esc(s.name)}</h3><p>${esc(s.publisher)} · ${esc(s.editionName)}</p><span class="series-rating" title="Valoración solo demostrativa"><span class="series-rating-value">4.3</span><span class="series-rating-star">★</span></span><button class="series-follow" aria-label="Seguir serie" aria-pressed="false">+</button></div></article>`).join('')}
- function paintVolumes(container,items){if(!container)return;
- container.innerHTML=items.map(v=>`<article class="volume-card"><div class="volume-main"><div class="volume-cover" aria-label="Sin derechos de portada"></div><div class="volume-info"><h3>${esc(v.series)} · Tomo ${v.num}</h3><p>Publicado · ficha verificable</p><p>${esc(v.publisher)}</p><div class="volume-actions"><button class="action" data-action="want-pilot" data-volume-id="${esc(v.id)}" aria-label="Lo quiero" aria-pressed="false">Lo quiero</button><button class="action" data-action="own-pilot" data-volume-id="${esc(v.id)}" aria-label="Lo tengo" aria-pressed="false">Lo tengo</button><button class="follow" data-follow="pilot" data-follow-series="${esc(v.series)}" aria-label="Seguir serie" aria-pressed="false">+</button></div></div></div></article>`).join('')}
- paintSeries(document.getElementById('featured'),series.slice(0,3));
- paintSeries(document.getElementById('popular'),series.slice(3,6));
- paintVolumes(document.getElementById('releases'),pub.slice(0,4));
- function refresh(){const s=C.read();document.querySelectorAll('#releases [data-volume-id]').forEach(b=>{const active=!!s[b.dataset.action.startsWith('want')?'wanted':'owned'][b.dataset.volumeId];b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));if(typeof paintTomoButton==='function')paintTomoButton(b)});
- document.querySelectorAll('#releases [data-follow-series]').forEach(b=>{const a=!!s.follow[b.dataset.followSeries];b.classList.toggle('active',a);b.textContent=a?'✓':'+'})}
- // Original homepage action handler runs in bubble phase; this handler syncs after it.
- document.addEventListener('click',e=>{
-  const mark=e.target.closest('#releases [data-volume-id]');
-  if(mark){const kind=mark.dataset.action.startsWith('want')?'want':'own';C.changeMark(mark.dataset.volumeId,kind,mark.classList.contains('active'));refresh();return}
-  const f=e.target.closest('#releases [data-follow-series]');
-  if(f){C.changeFollow(f.dataset.followSeries,f.classList.contains('active'));refresh();return}
-  const card=e.target.closest('.series-card[data-series]');
-  if(card&&!e.target.closest('button'))location.href='serie.html?serie='+encodeURIComponent(card.dataset.series)
- });
- document.querySelectorAll('.series-card[data-series]').forEach(card=>{const b=card.querySelector('.series-follow');if(!b)return;const active=!!C.read().follow[card.dataset.series];b.classList.toggle('active',active);b.textContent=active?'✓':'+';b.setAttribute('aria-pressed',String(active))});
- window.addEventListener('tomori:state',refresh);refresh();
+ 'use strict';
+ const C=window.TomoriCollector;
+ if (!C || typeof SERIES === 'undefined' || typeof VOLUMES === 'undefined')return;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const primary=SERIES.filter(s=>s.primary);
+ const byEdition=new Map(SERIES.map(s=>[s.id,s]));
+ // Selección de tomos publicados de obras diferentes, sin presentar datos
+ // anteriores como lanzamientos actuales cuando su fecha no está verificada.
+ const samples=[];
+ for(const edition of primary){
+   const list=VOLUMES.filter(v=>v.editionId===edition.id&&v.published).sort((a,b)=>b.num-a.num);
+   if(list.length)samples.push(list[0]);
+ }
+ const featured=document.getElementById('featured');
+ const popular=document.getElementById('popular');
+ const releases=document.getElementById('releases');
+ if(!featured||!popular||!releases)return;
+ const card=(ed,s)=>`<article class="series-card" tabindex="0" role="link" data-series="${esc(ed.name)}" data-edition-id="${esc(ed.id)}" aria-label="Abrir ${esc(ed.name)}, ${esc(ed.editionName)}"><div class="series-cover" aria-label="Portada genérica sin licencia de imagen"></div><div class="series-info"><h3>${esc(ed.name)}</h3><p>${esc(ed.publisher)} · ${esc(ed.market)} · ${esc(ed.editionName)}</p><span class="series-rating" aria-label="Sin valoraciones comunitarias"><span class="series-rating-value">—</span><span class="series-rating-star">★</span></span><button type="button" class="series-follow ${s.follow[ed.id]?'active':''}" aria-label="Seguir edición" data-home-follow="${esc(ed.id)}" aria-pressed="${!!s.follow[ed.id]}">${s.follow[ed.id]?'✓':'+'}</button></div></article>`;
+ const heart='<svg class="tomori-state-icon tomori-heart" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>';
+ const book='<svg class="tomori-state-icon tomori-book" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false"><path d="M12 7.3c-2.3-1.7-5.4-2.1-9-1.1V19c3.6-1 6.7-.6 9 1.1m0-12.8c2.3-1.7 5.4-2.1 9-1.1V19c-3.6-1-6.7-.6-9 1.1m0-12.8v12.8"/></svg>';
+ const vol=(v,s)=>{const ed=byEdition.get(v.editionId),want=!!s.wanted[v.id],owned=!!s.owned[v.id];return `<article class="volume-card" data-home-volume="${esc(v.id)}"><div class="volume-main"><div class="volume-cover" aria-label="Portada genérica; uso de portadas reales pendiente de permisos"></div><div class="volume-info"><h3>${esc(v.series)} · Tomo ${v.num}</h3><p>${esc(v.publisher)} · ${esc(v.market)}</p><p>${esc(ed?.editionName||'Edición verificada')}</p><p>Publicado · Registro editorial</p><div class="volume-actions"><button class="action ${want?'active':''}" data-action="want-real" data-volume-id="${esc(v.id)}" type="button" aria-label="Lo quiero" aria-pressed="${want}">${want?heart:'Lo quiero'}</button><button class="action ${owned?'active':''}" data-action="own-real" data-volume-id="${esc(v.id)}" type="button" aria-label="Lo tengo" aria-pressed="${owned}">${owned?book:'Lo tengo'}</button><button class="follow ${s.follow[v.editionId]?'active':''}" data-home-follow="${esc(v.editionId)}" type="button" aria-label="Seguir edición" aria-pressed="${!!s.follow[v.editionId]}">${s.follow[v.editionId]?'✓':'+'}</button></div></div></div></article>`};
+ // Las viñetas originales de Inicio muestran 3 + 3 + 4 fichas.
+ // Con cinco obras algunas se repiten entre secciones, no en el mismo grupo.
+ function paint(){
+  const s=C.read();
+  featured.innerHTML=primary.slice(0,3).map(e=>card(e,s)).join('');
+  popular.innerHTML=primary.slice(3).concat(primary.slice(0,1)).map(e=>card(e,s)).join('');
+  releases.innerHTML=samples.slice(0,4).map(v=>vol(v,s)).join('');
+ }
+ // En Inicio existe código ilustrativo antiguo: interceptar solo los clics
+ // de tarjetas importadas para que no altere los estados ni genere toasts falsos.
+ document.addEventListener('click',event=>{
+  const mark=event.target.closest('#releases [data-volume-id]');
+  const follow=event.target.closest('#featured [data-home-follow],#popular [data-home-follow],#releases [data-home-follow]');
+  const seriesCard=event.target.closest('#featured .series-card[data-edition-id],#popular .series-card[data-edition-id]');
+  if(!mark&&!follow&&!seriesCard)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(mark){
+   const kind=mark.dataset.action.startsWith('want-')?'want':'own';
+   C.changeMark(mark.dataset.volumeId,kind);
+   paint();
+  }else if(follow){
+   C.changeFollow(follow.dataset.homeFollow);
+   paint();
+  }else if(seriesCard){
+   location.href='serie.html?serie='+encodeURIComponent(seriesCard.dataset.series)+'&edicion='+encodeURIComponent(seriesCard.dataset.editionId);
+  }
+ },true);
+ // Evento teclado: las fichas mantienen navegación accesible.
+ document.addEventListener('keydown',event=>{
+  if(event.key!=='Enter'&&event.key!==' ')return;
+  const card=event.target.closest('#featured .series-card[data-edition-id],#popular .series-card[data-edition-id]');
+  if(!card||event.target.closest('button'))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  location.href='serie.html?serie='+encodeURIComponent(card.dataset.series)+'&edicion='+encodeURIComponent(card.dataset.editionId);
+ },true);
+ // Mantener datos de Inicio sincronizados con los de las otras páginas.
+ window.addEventListener('storage',e=>{if(e.key===C.key)paint()});
+ window.addEventListener('tomori:state',paint);
+ paint();
 })();
-
 
 /* TOMORI · TARJETAS DE TOMO COMPACTAS · REGLA APROBADA
  * Compatible con portadas Open Library y el laboratorio Ivrea.

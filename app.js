@@ -1,28 +1,20 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const storeKey='tomori-internacional-experimental-v12';let state={};try{state=JSON.parse(localStorage.getItem(storeKey)||'{}')}catch{};state.owned??={};state.wanted??={};state.follow??={};state.ratings??={};state.quotes??={};state.votes??={};const save=()=>localStorage.setItem(storeKey,JSON.stringify(state));
+const storeKey='tomori-internacional-experimental-v12';let state={};try{state=window.TomoriCollector?TomoriCollector.read():JSON.parse(localStorage.getItem(storeKey)||'{}')}catch{};state.owned??={};state.wanted??={};state.follow??={};state.ratings??={};state.quotes??={};state.votes??={};const save=()=>localStorage.setItem(storeKey,JSON.stringify(state));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toast=t=>{let x=$('#toast');if(!x)return;x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2400)};
-const navSeries=n=>location.href='serie.html?serie='+encodeURIComponent(n);
-// Puntuación ilustrativa coherente con la media provisional del Perfil de serie.
-// Si el usuario valora la serie, su nota afecta a la media demostrativa al volver al Catálogo.
-const seriesDemoCriteria=[4.4,4.1,4.7,4.0];
-const seriesDemoScore=name=>{
-  const mine=state.ratings[name];
-  const criteria=Array.isArray(mine)&&mine.length===4
-    ?seriesDemoCriteria.map((base,i)=>(base*9+Number(mine[i]))/10)
-    :seriesDemoCriteria;
-  return (criteria.reduce((sum,n)=>sum+n,0)/criteria.length).toFixed(1);
-};
-const serieCard=s=>`<article class="series-card" tabindex="0" role="link" data-open-series="${esc(s.name)}"><div class="series-cover" aria-label="Portada provisional"></div><div class="series-info"><h3>${esc(s.name)}</h3><p>${esc(s.genre)} · ${esc(s.publisher)}</p><span class="series-rating" role="img" aria-label="Calificación ilustrativa: ${seriesDemoScore(s.name)} de 5 estrellas" title="Calificación ilustrativa de la comunidad · ${seriesDemoScore(s.name)} de 5"><span class="series-rating-star" aria-hidden="true">★</span><span class="series-rating-value" aria-hidden="true">${seriesDemoScore(s.name)}</span></span><button class="series-follow ${state.follow[s.name]?'active':''}" data-toggle-follow="${esc(s.name)}" aria-label="Seguir serie" aria-pressed="${!!state.follow[s.name]}">${state.follow[s.name]?'✓':'+'}</button></div></article>`;
-// Valoración numérica ilustrativa específica del tomo; no son datos reales.
-// Se muestra únicamente en la vista Lanzamientos, superpuesta a la portada.
-const tomoDemoScore=v=>(3.6+((Number(v.num)*7+String(v.series).length)%14)/10).toFixed(1);
+const primaryEditions=SERIES.filter(s=>s.primary);
+const editionById=new Map(SERIES.map(s=>[s.id,s]));
+const editionForVolume=v=>editionById.get(v.editionId);
+const navSeries=(n,id)=>location.href='serie.html?serie='+encodeURIComponent(n)+(id?'&edicion='+encodeURIComponent(id):'');
+/* Catalogo real: no hay valoraciones ni votos comunitarios importados. */
+const serieCard=s=>`<article class="series-card" tabindex="0" role="link" data-open-series="${esc(s.name)}" data-edition="${esc(s.id)}"><div class="series-cover" aria-label="Portada genérica, derechos de imagen pendientes"></div><div class="series-info"><h3>${esc(s.name)}</h3><p>${esc(s.publisher)} · ${esc(s.market)} · ${esc(s.editionName)}</p><span class="series-rating" aria-label="Todavía no hay valoraciones"><span class="series-rating-star" aria-hidden="true">★</span><span class="series-rating-value">—</span></span><button class="series-follow ${state.follow[s.id]?'active':''}" data-toggle-follow="${esc(s.id)}" aria-label="Seguir esta edición" aria-pressed="${!!state.follow[s.id]}">${state.follow[s.id]?'✓':'+'}</button></div></article>`;
 // TOMORI · Norma global de estados de tomos (v1.0): iconos negros, sin cambiar tamaño.
 const tomoriIconHeart='<svg class="tomori-state-icon tomori-heart" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>';
 const tomoriIconBook='<svg class="tomori-state-icon tomori-book" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false"><path d="M12 7.3c-2.3-1.7-5.4-2.1-9-1.1V19c3.6-1 6.7-.6 9 1.1m0-12.8c2.3-1.7 5.4-2.1 9-1.1V19c-3.6-1-6.7-.6-9 1.1m0-12.8v12.8"/></svg>';
 const tomoriTomoLabel=(mark,selected)=>selected?(mark==='want'?tomoriIconHeart:tomoriIconBook):(mark==='want'?'Lo quiero':'Lo tengo');
-const tomoCard=(v,showCoverRating=false)=>{const own=!!state.owned[v.id],want=!!state.wanted[v.id];const score=tomoDemoScore(v);return `<article class="volume-card"><div class="volume-main"><div class="volume-cover" role="img" aria-label="Portada provisional">${showCoverRating?`<span class="volume-cover-rating" aria-label="Valoración ilustrativa del tomo: ${score} de 5" title="Valoración de ejemplo: ${score} de 5"><span class="volume-cover-rating-value">${score}</span><span class="volume-cover-rating-star" aria-hidden="true">★</span></span>`:''}</div><div class="volume-info"><h3><a href="serie.html?serie=${encodeURIComponent(v.series)}" style="color:inherit;text-decoration:none">${esc(v.series)}</a> · Tomo ${v.num}</h3><p>${v.published?'Publicado · registro verificado':'Anunciado · fecha pendiente de verificar'}</p><p>${esc(v.publisher)}</p><div class="volume-actions"><button type="button" class="action ${want?'active':''}" aria-label="Lo quiero" title="Lo quiero" aria-pressed="${want}" data-mark="want" data-id="${esc(v.id)}">${tomoriTomoLabel('want',want)}</button><button type="button" class="action ${own?'active':''}" aria-label="Lo tengo" title="Lo tengo" aria-pressed="${own}" data-mark="own" data-id="${esc(v.id)}">${tomoriTomoLabel('own',own)}</button><button class="follow ${state.follow[v.series]?'active':''}" data-toggle-follow="${esc(v.series)}" aria-label="Seguir serie" aria-pressed="${!!state.follow[v.series]}">${state.follow[v.series]?'✓':'+'}</button></div></div></div></article>`};
-function initCommon(){const h=$('#header'),m=$('#menu'),mb=$('#menuButton');function upd(){h.classList.toggle('compact',scrollY>90)}addEventListener('scroll',upd,{passive:true});upd();mb.onclick=()=>{m.classList.toggle('open');mb.setAttribute('aria-expanded',m.classList.contains('open'))};$('#closeMenu').onclick=()=>m.classList.remove('open');document.addEventListener('keydown',e=>{if(e.key==='Escape')m.classList.remove('open')});document.addEventListener('click',e=>{const dest=e.target.closest('[data-dest]');if(dest){m.classList.remove('open');if(dest.dataset.dest==='catalogo')location.href='catalogo.html';else if(dest.dataset.dest==='feedback' && $('#feedback'))$('#feedback').scrollIntoView({behavior:'smooth',block:'start'});else if(dest.dataset.dest==='coleccion')location.href='coleccion.html';else if(dest.dataset.dest==='sesion')location.href='perfil.html';else toast('Sección fuera del alcance de v1.1')}const open=e.target.closest('[data-open-series]');if(open&&!e.target.closest('button'))navSeries(open.dataset.openSeries);const follow=e.target.closest('[data-toggle-follow]');if(follow){let n=follow.dataset.toggleFollow;state.follow[n]=window.TomoriCollector?TomoriCollector.changeFollow(n):!state.follow[n];if(!window.TomoriCollector)save();$$(`[data-toggle-follow]`).filter(b=>b.dataset.toggleFollow===n).forEach(b=>{b.classList.toggle('active',!!state.follow[n]);b.textContent=state.follow[n]?'✓':'+';b.setAttribute('aria-pressed',!!state.follow[n])});const b=$('#followSeries');if(b&&new URLSearchParams(location.search).get('serie')===n)b.textContent=state.follow[n]?'✓ Siguiendo':'Seguir serie'}const mark=e.target.closest('[data-mark]');if(mark){const id=mark.dataset.id,kind=mark.dataset.mark;if(kind==='own'&&!VOLUMES.find(v=>v.id===id)?.published){toast('Este tomo está anunciado y no se confirmó su publicación');return;}const already=!!state[kind==='own'?'owned':'wanted'][id];if(window.TomoriCollector){TomoriCollector.changeMark(id,kind,!already);state=TomoriCollector.read()}else{state[kind==='own'?'owned':'wanted'][id]=!already;if(!already)state[kind==='own'?'wanted':'owned'][id]=false;save()}if(document.body.dataset.page==='catálogo')renderCatalog();else if(document.body.dataset.page==='perfil de serie')renderVolumes();if(document.body.dataset.page==='perfil de serie')renderProgress()}});document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-open-series]'))navSeries(e.target.dataset.openSeries)})}
+const tomoCard=(v,showCoverRating=false)=>{const own=!!state.owned[v.id],want=!!state.wanted[v.id],edition=editionForVolume(v),label=edition?edition.editionName:v.market;
+ return `<article class="volume-card"><div class="volume-main"><div class="volume-cover" role="img" aria-label="Portada genérica, pendiente de autorización"></div><div class="volume-info"><h3><a href="serie.html?serie=${encodeURIComponent(v.series)}&edicion=${encodeURIComponent(v.editionId)}" style="color:inherit;text-decoration:none">${esc(v.series)}</a> · Tomo ${v.num}</h3><p>${v.published?'Publicado':'Anunciado, no publicado'}</p><p>${esc(v.publisher)} · ${esc(v.market)} · ${esc(label)}</p><div class="volume-actions"><button type="button" class="action ${want?'active':''}" aria-label="Lo quiero" title="Lo quiero" aria-pressed="${want}" data-mark="want" data-id="${esc(v.id)}">${tomoriTomoLabel('want',want)}</button><button type="button" class="action ${own?'active':''}" aria-label="Lo tengo" title="Lo tengo" aria-pressed="${own}" data-mark="own" data-id="${esc(v.id)}">${tomoriTomoLabel('own',own)}</button><button class="follow ${state.follow[v.editionId]?'active':''}" data-toggle-follow="${esc(v.editionId)}" aria-label="Seguir edición" aria-pressed="${!!state.follow[v.editionId]}">${state.follow[v.editionId]?'✓':'+'}</button></div></div></div></article>`};
+function initCommon(){const h=$('#header'),m=$('#menu'),mb=$('#menuButton');function upd(){h.classList.toggle('compact',scrollY>90)}addEventListener('scroll',upd,{passive:true});upd();mb.onclick=()=>{m.classList.toggle('open');mb.setAttribute('aria-expanded',m.classList.contains('open'))};$('#closeMenu').onclick=()=>m.classList.remove('open');document.addEventListener('keydown',e=>{if(e.key==='Escape')m.classList.remove('open')});document.addEventListener('click',e=>{const dest=e.target.closest('[data-dest]');if(dest){m.classList.remove('open');if(dest.dataset.dest==='catalogo')location.href='catalogo.html';else if(dest.dataset.dest==='feedback' && $('#feedback'))$('#feedback').scrollIntoView({behavior:'smooth',block:'start'});else if(dest.dataset.dest==='coleccion')location.href='coleccion.html';else if(dest.dataset.dest==='sesion')location.href='perfil.html';else toast('Sección fuera del alcance de v1.1')}const open=e.target.closest('[data-open-series]');if(open&&!e.target.closest('button'))navSeries(open.dataset.openSeries,open.dataset.edition);const follow=e.target.closest('[data-toggle-follow]');if(follow){let n=follow.dataset.toggleFollow;state.follow[n]=window.TomoriCollector?TomoriCollector.changeFollow(n):!state.follow[n];if(!window.TomoriCollector)save();$$(`[data-toggle-follow]`).filter(b=>b.dataset.toggleFollow===n).forEach(b=>{b.classList.toggle('active',!!state.follow[n]);b.textContent=state.follow[n]?'✓':'+';b.setAttribute('aria-pressed',!!state.follow[n])});const b=$('#followSeries');if(b&&activeSeries?.id===n)b.textContent=state.follow[n]?'✓ Siguiendo':'Seguir edición'}const mark=e.target.closest('[data-mark]');if(mark){const id=mark.dataset.id,kind=mark.dataset.mark;if(kind==='own'&&!VOLUMES.find(v=>v.id===id)?.published){toast('Este tomo está anunciado y no se confirmó su publicación');return;}const already=!!state[kind==='own'?'owned':'wanted'][id];if(window.TomoriCollector){TomoriCollector.changeMark(id,kind,!already);state=TomoriCollector.read()}else{state[kind==='own'?'owned':'wanted'][id]=!already;if(!already)state[kind==='own'?'wanted':'owned'][id]=false;save()}if(document.body.dataset.page==='catálogo')renderCatalog();else if(document.body.dataset.page==='perfil de serie')renderVolumes();if(document.body.dataset.page==='perfil de serie')renderProgress()}});document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-open-series]'))navSeries(e.target.dataset.openSeries,e.target.dataset.edition)})}
 let view='series',catCount=8;
 // Selección múltiple por criterio: OR dentro de cada grupo, AND entre grupos.
 const seriesFacetLabels={genre:'Género',publisher:'Editorial',status:'Estado'};
@@ -35,7 +27,7 @@ const launchSeriesByName=new Map(SERIES.map(series=>[series.name,series]));
 function initCatalog(){
   const groups=[['genre','Género'],['publisher','Editorial'],['status','Estado']];
   $('#catalogFilterOptions').innerHTML=groups.map(([key,label])=>{
-    const values=[...new Set(SERIES.map(s=>s[key]))].sort((a,b)=>a.localeCompare(b,'es'));
+    const values=[...new Set(primaryEditions.map(s=>s[key]))].sort((a,b)=>a.localeCompare(b,'es'));
     return `<fieldset class="catalog-filter-group"><legend>${label}</legend>${values.map(v=>`<label class="catalog-filter-choice"><input type="checkbox" data-facet="${key}" value="${esc(v)}"><span>${esc(v)}</span></label>`).join('')}</fieldset>`;
   }).join('');
   $('#catalogFilterOptions').addEventListener('change',e=>{
@@ -57,7 +49,7 @@ function initCatalog(){
   });
   // Los mismos controles de Series, pero con estado independiente en Lanzamientos.
   $('#launchFilterOptions').innerHTML=groups.map(([key,label])=>{
-    const values=[...new Set(VOLUMES.map(v=>launchSeriesByName.get(v.series)?.[key]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    const values=[...new Set(VOLUMES.map(v=>editionById.get(v.editionId)?.[key]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
     return `<fieldset class="catalog-filter-group"><legend>${label}</legend>${values.map(v=>`<label class="catalog-filter-choice"><input type="checkbox" data-launch-facet="${key}" value="${esc(v)}"><span>${esc(v)}</span></label>`).join('')}</fieldset>`;
   }).join('');
   $('#launchFilterOptions').addEventListener('change',e=>{
@@ -125,14 +117,17 @@ function renderCatalog(){
   $('#catalogTitle').textContent=({series:'Todas las series',lanzamientos:'Nuevos lanzamientos',populares:'Rankings populares'})[view];
   if(view==='populares'){
     results.className='';
-    const ranks=[['Series más coleccionadas','Orden ilustrativo por colecciones registradas.',SERIES.slice().sort((a,b)=>b.pop-a.pop).slice(0,3),false],['Tomos más solicitados','Orden ilustrativo por listas de deseos.',VOLUMES.slice().sort((a,b)=>b.pop-a.pop).slice(0,3),true],['Series mejor valoradas','Valoraciones ficticias para el prototipo.',SERIES.slice().sort((a,b)=>b.pop-a.pop).slice(0,3),false],['Tomos mejor valorados','Valoraciones ficticias para el prototipo.',VOLUMES.slice().sort((a,b)=>b.pop-a.pop).slice(0,3),true]];
-    results.innerHTML=ranks.map(([title,desc,items,vol])=>{const filtered=items.filter(x=>(x.name||x.series+' tomo '+x.num).toLowerCase().includes(q));return `<div class="ranking-block"><h2 style="display:table;padding:10px 20px;background:white;border:2px solid #111;box-shadow:4px 4px #111">${title}</h2><p class="ranking-description">${desc} · Datos de ejemplo.</p><div class="cards ${vol?'volume-grid launch-volume-grid ranking-volume-grid':'series-grid'} catalog-grid">${filtered.map((v,i)=>`<div class="rank-wrap"><span class="rank-number">${i+1}</span>${vol?tomoCard(v,true):serieCard(v)}</div>`).join('')||'<p>Sin coincidencias.</p>'}</div><div class="ranking-more-wrap"><button class="button ranking-more" type="button" data-ranking>Ver ranking completo</button></div></div>`}).join('');
-    $$('[data-ranking]').forEach(b=>b.onclick=()=>toast('Ranking completo previsto para una versión posterior'));
+    // Conservar el aspecto de los bloques aprobados, sin clasificaciones ni votos ficticios.
+    const sorted=primaryEditions.slice().sort((a,b)=>a.name.localeCompare(b.name,'es'));
+    const latest=VOLUMES.filter(v=>v.published).slice().sort((a,b)=>b.num-a.num);
+    const blocks=[['Series del catálogo','Muestra editorial por nombre, sin métricas de popularidad.',sorted.slice(0,3),false],['Tomos publicados','Tomos individualmente documentados.',latest.slice(0,3),true],['Otras obras verificadas','Aún no existen valoraciones comunitarias.',sorted.slice(2,5),false],['Ediciones disponibles','No hay votos suficientes para generar un ranking.',latest.slice(3,6),true]];
+    results.innerHTML=blocks.map(([title,desc,items,isVol])=>`<div class="ranking-block"><h2 style="display:table;padding:10px 20px;background:white;border:2px solid #111;box-shadow:4px 4px #111">${title}</h2><p class="ranking-description">${desc}</p><div class="cards ${isVol?'volume-grid launch-volume-grid ranking-volume-grid':'series-grid'} catalog-grid">${items.map(v=>`<div class="rank-wrap">${isVol?tomoCard(v):serieCard(v)}</div>`).join('')}</div><div class="ranking-more-wrap"><button class="button ranking-more" type="button" data-ranking>Ver ranking completo</button></div></div>`).join('');
+    $$('[data-ranking]').forEach(b=>b.onclick=()=>toast('No hay suficientes datos de usuarios para publicar rankings.'));
     return;
   }
   const isVol=view==='lanzamientos';
   results.className=`cards ${isVol?'volume-grid launch-volume-grid':'series-grid'} catalog-grid`;
-  let items=(isVol?VOLUMES:SERIES).filter(x=>[x.name,x.series,x.author,x.publisher,x.num&&'tomo '+x.num,x.num].filter(Boolean).join(' ').toLocaleLowerCase('es').includes(q));
+  let items=(isVol?VOLUMES:primaryEditions).filter(x=>[x.name,x.series,x.author,x.publisher,x.editionName,x.market,x.num&&'tomo '+x.num,x.num].filter(Boolean).join(' ').toLocaleLowerCase('es').includes(q));
   if(!isVol){
     for(const key of Object.keys(seriesSelectedFilters)){
       const active=seriesSelectedFilters[key];if(active.size)items=items.filter(s=>active.has(s[key]));
@@ -142,13 +137,13 @@ function renderCatalog(){
   }else{
     for(const key of Object.keys(launchSelectedFilters)){
       const active=launchSelectedFilters[key];
-      if(active.size)items=items.filter(v=>active.has(launchSeriesByName.get(v.series)?.[key]));
+      if(active.size)items=items.filter(v=>active.has(editionById.get(v.editionId)?.[key]));
     }
     items.sort((a,b)=>{
-      if(launchSort==='old')return a.year-b.year||a.num-b.num||a.series.localeCompare(b.series,'es');
+      if(launchSort==='old')return (a.releaseDate||'').localeCompare(b.releaseDate||'')||a.num-b.num||a.series.localeCompare(b.series,'es');
       if(launchSort==='popular')return b.pop-a.pop||b.year-a.year||b.num-a.num;
       if(launchSort==='name')return a.series.localeCompare(b.series,'es')||a.num-b.num;
-      return b.year-a.year||b.num-a.num||a.series.localeCompare(b.series,'es');
+      return (b.releaseDate||'').localeCompare(a.releaseDate||'')||b.num-a.num||a.series.localeCompare(b.series,'es');
     });
     renderActiveLaunchFilters();
   }
@@ -156,18 +151,71 @@ function renderCatalog(){
   more.hidden=items.length<=catCount;
 }
 let activeSeries,allVol=[],volCount=12,quoteCount=3;
-function initProfile(){const requested=new URLSearchParams(location.search).get('serie');activeSeries=SERIES.find(s=>s.name===requested)||SERIES[0];const s=activeSeries;$('#pageHeading').textContent=s.name;$('#seriesTitle').textContent=s.name;$('#seriesMeta').innerHTML=[['Autor',s.author],['Géneros',s.genre],['Editorial y edición',s.publisher+' · '+s.editionName],['Estado',s.status],['Tomos publicados',s.publishedCount===null?'Total no confirmado':s.publishedCount+' (editorial) · '+s.publishedVerifiedCount+' tomos con ficha individual']].map(([k,v])=>`<p><strong>${k}</strong><br>${esc(v)}</p>`).join('');$('#synopsisPublisher').textContent=s.publisher;$('#followSeries').textContent=state.follow[s.name]?'✓ Siguiendo':'Seguir serie';$('#followSeries').onclick=()=>{state.follow[s.name]=window.TomoriCollector?TomoriCollector.changeFollow(s.name):!state.follow[s.name];if(!window.TomoriCollector)save();$('#followSeries').textContent=state.follow[s.name]?'✓ Siguiendo':'Seguir serie'};$$('[data-scroll]').forEach(b=>b.onclick=()=>$('#'+b.dataset.scroll).scrollIntoView({behavior:'smooth'}));allVol=VOLUMES.filter(v=>v.series===s.name);$('#volumeSearch').oninput=resetVol;$('#volumeSort').onchange=resetVol;$('#volumeFilter').onchange=resetVol;$('#volumeMore').onclick=()=>{volCount+=matchMedia('(max-width:600px)').matches?4:12;renderVolumes()};addEventListener('resize',()=>{if(!$('#volumeSearch').value&&!$('#volumeFilter').value.includes('owned'))renderVolumes()});$('#rateSeries').onclick=()=>{$('#ratingEditor').hidden=!$('#ratingEditor').hidden};$('#saveRating').onclick=()=>{const values=$$('#ratingInputs select').map(e=>Number(e.value));state.ratings[s.name]=values;save();$('#ratingEditor').hidden=true;renderRatings();toast('Valoración de demostración guardada')};renderRatings();renderProgress();volCount=matchMedia('(max-width:600px)').matches?4:12;renderVolumes();initQuotes()}
-function renderRatings(){const s=activeSeries.name,labels=['Historia','Protagonista','Arte','Personajes secundarios'],mine=state.ratings[s],base=[4.4,4.1,4.7,4.0];let vals=mine?base.map((v,i)=>(v*9+mine[i])/10):base;$('#ratingDetails').innerHTML=labels.map((k,i)=>`<div class="rating-row"><strong>${k}</strong><span class="stars">${'★'.repeat(Math.round(vals[i]))}${'☆'.repeat(5-Math.round(vals[i]))} ${vals[i].toFixed(1)}</span></div>`).join('');$('#ratingInputs').innerHTML=labels.map((k,i)=>`<label class="rating-row">${k}<select class="control">${[1,2,3,4,5].map(n=>`<option ${n===(mine?.[i]||4)?'selected':''} value="${n}">${n} ★</option>`).join('')}</select></label>`).join('');const avg=vals.reduce((a,b)=>a+b,0)/4;$('#generalRating').textContent=`★ ${avg.toFixed(1)} / 5 · ${mine?'10':'9'} votos (ejemplo)`;$('#ratingCount').textContent='Puntuaciones de ejemplo; la valoración guardada modifica la media simulada.';$('#rateSeries').textContent=mine?'Editar mi valoración':'Valorar esta serie'}
+function initProfile(){
+ const qp=new URLSearchParams(location.search),requested=qp.get('serie'),editionId=qp.get('edicion');
+ activeSeries=SERIES.find(s=>s.id===editionId && (!requested||s.name===requested))||SERIES.find(s=>s.name===requested&&s.primary)||primaryEditions[0];
+ if(!activeSeries)return;
+ $('#volumeSearch').oninput=resetVol;$('#volumeSort').onchange=resetVol;$('#volumeFilter').onchange=resetVol;
+ $('#volumeMore').onclick=()=>{volCount+=matchMedia('(max-width:600px)').matches?4:12;renderVolumes()};
+ addEventListener('resize',()=>renderVolumes());
+ $$('[data-scroll]').forEach(b=>b.onclick=()=>$('#'+b.dataset.scroll).scrollIntoView({behavior:'smooth'}));
+ $('#rateSeries').onclick=()=>{$('#ratingEditor').hidden=!$('#ratingEditor').hidden};
+ $('#saveRating').onclick=()=>{const values=$$('#ratingInputs select').map(e=>Number(e.value));state.ratings[activeSeries.id]=values;save();$('#ratingEditor').hidden=true;renderRatings();toast('Tu valoración personal se guardó')};
+ $('#followSeries').onclick=()=>{state.follow[activeSeries.id]=window.TomoriCollector?TomoriCollector.changeFollow(activeSeries.id):!state.follow[activeSeries.id];if(!window.TomoriCollector)save();$('#followSeries').textContent=state.follow[activeSeries.id]?'✓ Siguiendo':'Seguir edición'};
+ applyActiveEdition();
+}
+function applyActiveEdition(){
+ const s=activeSeries,editionList=SERIES.filter(e=>e.workId===s.workId);
+ $('#pageHeading').textContent=s.name;$('#seriesTitle').textContent=s.name;
+ const values=[['Autor',s.author],['Géneros',s.genre],['Editorial y edición',s.publisher+' · '+s.market+' · '+s.editionName],['Estado de edición',s.status==='complete'?'Completa':s.status==='out_of_print'?'Descatalogada':s.status==='ongoing'?'En curso':'Por revisar'],['Publicados en esta edición',s.publishedCount==null?'Cantidad pendiente de confirmar':s.publishedCount+' declarados · '+s.publishedVerifiedCount+' fichas verificadas']];
+ $('#seriesMeta').innerHTML=values.map(([k,v])=>`<p><strong>${esc(k)}</strong><br>${esc(v)}</p>`).join('')+`<p style="grid-column:1/-1"><label for="editionSelector"><strong>Seleccionar edición</strong></label><select id="editionSelector" class="control" style="max-width:100%;width:100%;margin-top:8px" aria-label="Seleccionar editorial, país y edición">${editionList.map(e=>`<option value="${esc(e.id)}" ${e.id===s.id?'selected':''}>${esc(e.publisher)} · ${esc(e.market)} · ${esc(e.editionName)}</option>`).join('')}</select></p>`;
+ $('#editionSelector').onchange=e=>{
+  const choice=editionById.get(e.target.value);if(!choice||choice.workId!==activeSeries.workId)return;
+  activeSeries=choice;
+  history.replaceState(null,'','serie.html?serie='+encodeURIComponent(choice.name)+'&edicion='+encodeURIComponent(choice.id));
+  $('#volumeSearch').value='';$('#volumeFilter').value='all';applyActiveEdition();
+ };
+ $('#synopsisPublisher').textContent=s.publisher;
+ $('#followSeries').textContent=state.follow[s.id]?'✓ Siguiendo':'Seguir edición';
+ allVol=VOLUMES.filter(v=>v.editionId===s.id);
+ renderRatings();renderProgress();volCount=matchMedia('(max-width:600px)').matches?4:12;renderVolumes();
+ initQuotes();
+}
+function renderRatings(){
+ const s=activeSeries.id,labels=['Historia','Protagonista','Arte','Personajes secundarios'];
+ const mine=state.ratings[s];
+ $('#ratingDetails').innerHTML=labels.map((k,i)=>`<div class="rating-row"><strong>${k}</strong><span class="stars">${mine?`${'★'.repeat(Number(mine[i]))}${'☆'.repeat(5-Number(mine[i]))} ${mine[i]}/5`:'Sin valoraciones'}</span></div>`).join('');
+ $('#ratingInputs').innerHTML=labels.map((k,i)=>`<label class="rating-row">${k}<select class="control">${[1,2,3,4,5].map(n=>`<option ${n===(mine?.[i]||4)?'selected':''} value="${n}">${n} ★</option>`).join('')}</select></label>`).join('');
+ $('#generalRating').textContent=mine?'★ '+(mine.reduce((a,b)=>a+Number(b),0)/mine.length).toFixed(1)+' / 5 · Personal':'★ — / 5';
+ $('#ratingCount').textContent=mine?'Tu valoración personal: no representa la media de otros usuarios.':'Aún no se han recibido valoraciones reales de la comunidad.';
+ $('#rateSeries').textContent=mine?'Editar mi valoración':'Valorar esta serie';
+}
 function renderProgress(){
- const total=activeSeries.publishedCount,own=allVol.filter(v=>v.published&&state.owned[v.id]).length;
- const note=total===null?'La editorial no confirma todavía el total de tomos publicados.':
- `${own}/${total} tomos publicados declarados · ${Math.round(100*own/total)}% (solo fichas verificadas disponibles en el piloto)`;
- $('#progressBox').innerHTML=`<h3>Mi colección</h3><p><strong>${esc(note)}</strong></p>${total?`<div class="progress-bar" role="progressbar" aria-valuenow="${own}" aria-valuemax="${total}"><div class="progress-fill" style="width:${100*own/total}%"></div></div>`:''}`;
+ const total=activeSeries.publishedCount,owned=allVol.filter(v=>v.published&&state.owned[v.id]).length;
+ const note=total===null?`${owned} tomos verificados en tu colección; el total publicado de esta edición no está confirmado.`:
+ `${owned}/${total} tomos publicados declarados · ${Math.round(100*owned/total)}% · ${activeSeries.publishedVerifiedCount} fichas publicadas verificadas`;
+ $('#progressBox').innerHTML=`<h3>Mi colección</h3><p><strong>${esc(note)}</strong></p>${total?`<div class="progress-bar" role="progressbar" aria-valuenow="${owned}" aria-valuemax="${total}"><div class="progress-fill" style="width:${100*owned/total}%"></div></div>`:''}`;
 }
 function resetVol(){volCount=matchMedia('(max-width:600px)').matches?4:12;renderVolumes()}
-function renderVolumes(){if(!activeSeries)return;let items=allVol.slice(),q=$('#volumeSearch').value.trim(),filter=$('#volumeFilter').value;if(q)items=items.filter(v=>String(v.num).includes(q));if(filter==='owned')items=items.filter(v=>state.owned[v.id]);if(filter==='wanted')items=items.filter(v=>state.wanted[v.id]);if(filter==='missing')items=items.filter(v=>!state.owned[v.id]);const sort=$('#volumeSort').value;items.sort((a,b)=>sort==='old'?a.num-b.num:sort==='rated'?((b.num*7)%13)-((a.num*7)%13):sort==='collected'?b.pop-a.pop:b.num-a.num);$('#volumeResults').innerHTML=items.slice(0,volCount).map(v=>tomoCard(v,true)).join('')||'<p class="empty">No hay tomos que coincidan con estos filtros.</p>';$('#volumeMore').hidden=items.length<=volCount}
-function initQuotes(){const name=activeSeries.name;state.quotes[name]??=[{id:'a',author:'Lectora Alba · ejemplo',text:'Un viaje que transforma las pequeñas decisiones en grandes aventuras.',votes:14,created:1},{id:'b',author:'MangaFan · ejemplo',text:'Personajes inolvidables y un mundo lleno de preguntas.',votes:10,created:2},{id:'c',author:'Kiro · ejemplo',text:'Una historia que crece contigo.',votes:8,created:3},{id:'d',author:'Nina · ejemplo',text:'Misterio, emoción y dibujos que cuentan más que las palabras.',votes:5,created:4},{id:'e',author:'Leo · ejemplo',text:'Un comienzo sencillo que sorprende a cada paso.',votes:3,created:5}];$('#quoteForm').onsubmit=e=>{e.preventDefault();let text=$('#quoteText').value.trim();if(!text)return;if(/spoiler/i.test(text)){toast('Evita spoilers en tu frase');return}let mine=state.quotes[name].find(q=>q.id==='mine');if(mine)mine.text=text;else state.quotes[name].push({id:'mine',author:'Tú · demostración',text,votes:0,created:Date.now()});save();$('#quoteText').value='';renderQuotes()};$('#moreQuotes').onclick=()=>{quoteCount+=3;renderQuotes()};renderQuotes()}
-function renderQuotes(){const arr=state.quotes[activeSeries.name].slice().sort((a,b)=>b.votes-a.votes||a.created-b.created);$('#quotes').innerHTML=arr.slice(0,quoteCount).map(q=>`<div class="quote"><small>${esc(q.author)}</small><p>${esc(q.text)}</p><div class="quote-actions"><span>${q.votes} votos</span><button class="button ${state.votes[activeSeries.name+q.id]?'active':''}" data-vote="${esc(q.id)}" ${q.id==='mine'?'disabled':''}>▲ Votar</button></div></div>`).join('');$('#moreQuotes').hidden=quoteCount>=arr.length;$$('[data-vote]').forEach(b=>b.onclick=()=>{const id=b.dataset.vote,key=activeSeries.name+id,q=state.quotes[activeSeries.name].find(x=>x.id===id);if(state.votes[key]){q.votes--;delete state.votes[key]}else{q.votes++;state.votes[key]=true}save();renderQuotes()});const mine=arr.find(q=>q.id==='mine');if(mine)$('#quoteText').placeholder='Edita tu frase anterior…'}
+function renderVolumes(){if(!activeSeries)return;let items=allVol.slice(),q=$('#volumeSearch').value.trim(),filter=$('#volumeFilter').value;if(q)items=items.filter(v=>String(v.num).includes(q));if(filter==='owned')items=items.filter(v=>state.owned[v.id]);if(filter==='wanted')items=items.filter(v=>state.wanted[v.id]);if(filter==='missing')items=items.filter(v=>v.published&&!state.owned[v.id]);const sort=$('#volumeSort').value;items.sort((a,b)=>sort==='old'?a.num-b.num:sort==='rated'?b.num-a.num:sort==='collected'?b.num-a.num:b.num-a.num);$('#volumeResults').innerHTML=items.slice(0,volCount).map(v=>tomoCard(v,true)).join('')||'<p class="empty">No hay tomos que coincidan con estos filtros.</p>';$('#volumeMore').hidden=items.length<=volCount}
+function initQuotes(){
+ const key=activeSeries.id;
+ state.quotes[key]??=[];
+ $('#quoteForm').onsubmit=e=>{
+  e.preventDefault();const t=$('#quoteText').value.trim();if(!t)return;
+  if(/spoiler/i.test(t)){toast('Evita spoilers en tu frase');return}
+  const mine=state.quotes[key].find(q=>q.id==='mine');
+  if(mine)mine.text=t;else state.quotes[key].push({id:'mine',author:'Tú',text:t,votes:0,created:Date.now()});
+  save();$('#quoteText').value='';renderQuotes();
+ };
+ quoteCount=3;
+ $('#moreQuotes').onclick=()=>{quoteCount+=3;renderQuotes()};renderQuotes();
+}
+function renderQuotes(){
+ const list=state.quotes[activeSeries.id]||[];
+ $('#quotes').innerHTML=list.slice(0,quoteCount).map(q=>`<div class="quote"><small>${esc(q.author)}</small><p>${esc(q.text)}</p></div>`).join('')||'<p class="note">Todavía no hay frases aportadas por usuarios.</p>';
+ $('#moreQuotes').hidden=list.length<=quoteCount;
+}
 /* PANTÉON — FEEDBACK GLOBAL: utilizar en todas las páginas nuevas.
    Formulario demostrativo idéntico al de Inicio, sin backend ni envío real. */
 function initFeedback(){

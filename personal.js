@@ -5,7 +5,7 @@ const C=window.TomoriCollector;if(!C)return;
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const page=document.body.dataset.page;
 if(!['perfil de usuario','mi colección','lo quiero'].includes(page))return;
-C.seedDemo();
+// Sin carga de datos personales demostrativos.
 const escapeText=t=>String(t??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 // app.js expone las tarjetas oficiales y mantiene su estado en 'state'.
 function fresh(){state=C.read();return state}
@@ -55,20 +55,20 @@ function renderTimeline(){
  const s=fresh(),list=s.activity.slice().sort((a,b)=>b.at-a.at);
  const display=activeHistory?list.slice(0,activityCount):list.slice(0,3);
  $('#activityList').innerHTML=display.map(a=>{
-  const v=C.getVolume(a.target),ser=a.type==='completed'?a.target:v?.series||C.bookName(a.target),num=v?.num||C.bookNumber(a.target);
+  const v=C.getVolume(a.target),edition=a.type==='completed'?C.getEdition(a.target):v&&C.getEdition(v.editionId),ser=edition?(edition.name+' · '+edition.publisher+' · '+edition.market+' · '+edition.editionName):(v?.series||C.bookName(a.target)),num=v?.num||C.bookNumber(a.target);
   let title='',icon='';
   if(a.type==='owned'){title=`Agregaste <strong>${escapeText(ser)}, tomo ${num}</strong>, a tu colección`;icon='▣'}
   else if(a.type==='wanted'){title=`Agregaste <strong>${escapeText(ser)}, tomo ${num}</strong>, a Lo quiero`;icon='♥'}
   else if(a.type==='completed'){title=`Completaste tu colección de <strong>${escapeText(ser)}</strong>`;icon='★'}
   else return '';
-  return `<article class="collector-event"><span class="collector-event-icon" aria-hidden="true">${icon}</span><h3>${title}</h3><p>${escapeText(C.dateTime(a.at))} · ${s.demoLabel?'actividad de demostración':'registro del prototipo'}</p></article>`;
+  return `<article class="collector-event"><span class="collector-event-icon" aria-hidden="true">${icon}</span><h3>${title}</h3><p>${escapeText(C.dateTime(a.at))} · registro personal</p></article>`;
  }).join('')||empty('Aún no hay actividad. Registra un tomo para empezar.');
  $('#activityAll').hidden=activeHistory;
  $('#activityMore').hidden=!activeHistory||list.length<=activityCount;
 }
 function openHistory(){activeHistory=true;activityCount=Math.max(4,activityCount);renderTimeline();jump('activityRecent')}
 function renderFollowing(){
- const s=fresh();const list=SERIES.filter(x=>s.follow[x.name]);
+ const s=fresh();const list=SERIES.filter(x=>s.follow[x.id]);
  $('#followingResults').innerHTML=list.slice(0,followCount).map(renderSeriesCard).join('')||empty('Todavía no sigues ninguna serie.');
  $('#followingMore').hidden=followCount>=list.length;
 }
@@ -87,8 +87,8 @@ function setupUserSettings(){
    C.updateUser({avatar:canvas.toDataURL('image/jpeg',.77)});notify('Foto de perfil actualizada');
   }catch(err){notify('No se pudo cargar la foto')}finally{URL.revokeObjectURL(url);e.target.value=''}
  });
- $('#clearDemo').onclick=()=>{C.clearDemo();notify('Datos de prueba vaciados')};
- $('#reloadDemo').onclick=()=>{const s=C.read();s.demoInitialized=false;C.write(s);C.seedDemo();notify('Ejemplos cargados')};
+ $('#clearDemo').onclick=()=>{if(confirm('¿Eliminar todos tus tomos, deseos y seguimientos guardados en Tomori? Esta acción no se puede deshacer.')){C.clearDemo();notify('Registros personales vaciados')}};
+ $('#reloadDemo').onclick=()=>{const t=C.stats();notify('Tus registros: '+t.volumes+' tomos, '+t.series+' ediciones y '+Object.keys(C.read().wanted).length+' deseos. No se generan ejemplos.')};
 }
 function initProfileUser(){
  setupUserSettings();
@@ -133,18 +133,18 @@ let wishView='wanted',wishCount=matchMedia('(max-width:600px)').matches?4:8;
 function getWishList(){return wishView==='missing'?C.missingVolumes():C.wantedVolumes()}
 function renderWishList(){
  fresh();const title={wanted:'LO QUIERO',grouped:'POR SERIES',missing:'ME FALTAN'}[wishView];$('#wishTitle').textContent=title;
- const hints={wanted:'Tomos que marcaste con el corazón.',grouped:'Tus tomos deseados, agrupados por serie.',missing:'Tomos publicados que te faltan de las series que sigues.'};$('#wishHint').textContent=hints[wishView]+' · Datos del prototipo (simulados).';
+ const hints={wanted:'Tomos que marcaste con el corazón.',grouped:'Tus tomos deseados, agrupados por serie.',missing:'Tomos publicados que te faltan de las series que sigues.'};$('#wishHint').textContent=hints[wishView]+' · Datos personales guardados en este navegador.';
  $$('.collector-square-tile').forEach(b=>{const on=b.dataset.wishView===wishView;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
  const query=$('#wishSearch').value.trim().toLocaleLowerCase('es');
- let items=getWishList();if(query){const numSearch=query.match(/^(?:tomo\s*)?0*(\d+)$/);items=items.filter(v=>v.series.toLocaleLowerCase('es').includes(query)||(numSearch?Number(numSearch[1])===v.num:String(v.num).includes(query)))}
+ let items=getWishList();if(query){const numSearch=query.match(/^(?:tomo\s*)?0*(\d+)$/);items=items.filter(v=>[v.series,v.publisher,v.market,C.getEdition(v.editionId)?.editionName].filter(Boolean).join(' ').toLocaleLowerCase('es').includes(query)||(numSearch?Number(numSearch[1])===v.num:String(v.num).includes(query)))}
  const displayed=items.slice(0,wishCount),target=$('#wishResults');
- if(!items.length){const following=SERIES.filter(x=>C.read().follow[x.name]).length;
+ if(!items.length){const following=SERIES.filter(x=>C.read().follow[x.id]).length;
    target.innerHTML=wishView==='missing'&&!following?empty('Sigue una serie para descubrir los tomos que te faltan.'):
     wishView==='missing'?empty('No tienes tomos publicados pendientes en las series que sigues.'):
     empty('Todavía no tienes tomos en Lo quiero.');
  }else if(wishView==='grouped'){
-   const groups=new Map();displayed.forEach(v=>{if(!groups.has(v.series))groups.set(v.series,[]);groups.get(v.series).push(v)});
-   target.innerHTML=[...groups].map(([name,volumes])=>`<section class="collector-wish-group"><h3 class="collector-narrator-title">${escapeText(name.toLocaleUpperCase('es'))}</h3><div class="cards volume-grid catalog-grid launch-volume-grid">${volumes.map(v=>tomoCard(v,true)).join('')}</div></section>`).join('');
+   const groups=new Map();displayed.forEach(v=>{if(!groups.has(v.editionId))groups.set(v.editionId,[]);groups.get(v.editionId).push(v)});
+   target.innerHTML=[...groups].map(([editionId,volumes])=>`<section class="collector-wish-group"><h3 class="collector-narrator-title">${escapeText(((C.getEdition(editionId)?.name||volumes[0]?.series||'')+' · '+(C.getEdition(editionId)?.publisher||'')+' · '+(C.getEdition(editionId)?.market||'')+' · '+(C.getEdition(editionId)?.editionName||'')).toLocaleUpperCase('es'))}</h3><div class="cards volume-grid catalog-grid launch-volume-grid">${volumes.map(v=>tomoCard(v,true)).join('')}</div></section>`).join('');
  }else target.innerHTML=`<div class="cards volume-grid catalog-grid launch-volume-grid">${displayed.map(v=>tomoCard(v,true)).join('')}</div>`;
  $('#wishMore').hidden=items.length<=wishCount;
 }
