@@ -1,7 +1,7 @@
 /*
- * TOMORI · One Piece Ivrea Argentina · portadas proporcionales · 2026-10-17.
+ * TOMORI · One Piece Ivrea Argentina · portadas a sangre y esquinas redondeadas · 2026-10-22.
  * Las portadas externas se usan SOLO en el prototipo privado, sin licencia confirmada.
- * Correccion visual: la caja se ajusta a la proporcion real de la portada.
+ * Correccion visual: la imagen cubre todo el marco, sin bandas y con esquinas redondeadas.
  * No altera coleccion, favoritos, filtros, renderizado ni paginacion.
  */
 (function () {
@@ -24,15 +24,25 @@
   css.id = 'tomori-onepiece-covers-css';
   css.textContent = `
     /* Ajuste SOLO de portadas One Piece con una imagen realmente enlazada. */
-    .tm-op-cover-host { position: relative !important; overflow: hidden !important;
-      box-sizing: border-box; background-color: #111; }
+    /* Solo el area de portada: sin marco blanco, sin padding y sin alterar la tarjeta. */
+    .tm-op-cover-host {
+      position: relative !important; overflow: hidden !important;
+      box-sizing: border-box !important;
+      margin: 0 !important; padding: 0 !important; border: 0 !important;
+      background-color: #111 !important;
+      border-radius: var(--tm-op-clip-radius, 9px) !important;
+      isolation: isolate;
+    }
     .tm-op-cover-host > img.tm-op-cover-img {
       position: absolute !important; inset: 0 !important;
       display: block !important; width: 100% !important; height: 100% !important;
       max-width: none !important; max-height: none !important;
       min-width: 0 !important; min-height: 0 !important;
       margin: 0 !important; padding: 0 !important; border: 0 !important;
-      object-fit: contain !important; object-position: center center !important;
+      object-fit: cover !important; object-position: center center !important;
+      border-radius: inherit !important;
+      /* Amplificacion suave: evita ribetes claros que algunas imagenes traen incorporados. */
+      transform: scale(1.025) !important; transform-origin: center center !important;
       background: #111; z-index: 1;
     }
     .tm-op-cover-host > .volume-cover-rating,
@@ -132,13 +142,34 @@
     return Array.from(card.children).find(child => child !== host && !child.contains(host)) || null;
   }
 
+  function isRounded(radius) {
+    return /[1-9]/.test(radius || '');
+  }
+
+  // Respetar el radio original. Si el tema antiguo no lo define, recortar
+  // solo las esquinas externas segun la disposicion de la ficha.
+  function setCoverRadius(host, card, horizontal) {
+    const original = host.dataset.tmOpOriginalRadius || '';
+    if (isRounded(original)) {
+      host.style.setProperty('--tm-op-clip-radius', original);
+      return;
+    }
+    const cardRadius = card ? getComputedStyle(card).borderTopLeftRadius : '';
+    const r = isRounded(cardRadius) ? cardRadius : '9px';
+    const radius = !card ? r : horizontal ? `${r} 0 0 ${r}` : `${r} ${r} 0 0`;
+    host.style.setProperty('--tm-op-clip-radius', radius);
+  }
+
   function fitCover(host) {
     if (!host.isConnected) return;
     const ratio = ratioOf(host);
     host.style.setProperty('--tm-op-ratio', String(ratio));
     host.style.setProperty('aspect-ratio', String(ratio), 'important');
     const card = host.closest('.volume-card, .series-card, .tm-edition-card, .edition-card');
-    if (!card) return;
+    if (!card) {
+      setCoverRadius(host, null, false);
+      return;
+    }
     const rect = card.getBoundingClientRect();
     const coverRect = host.getBoundingClientRect();
     const info = getInfo(card, host);
@@ -152,6 +183,7 @@
       infoRect.top < coverRect.bottom - Math.min(12, coverRect.height / 4);
     card.classList.toggle('tm-op-card-horizontal', Boolean(horizontal));
     card.classList.toggle('tm-op-card-vertical', !horizontal);
+    setCoverRadius(host, card, Boolean(horizontal));
     if (horizontal) {
       const desired = Math.max(40, Math.min(rect.width * 0.63,
         (rect.height - (card.clientTop || 0) * 2) * ratio));
@@ -188,6 +220,8 @@
       if (previous.dataset.coverUrl === url) { fitCover(host); return; }
       previous.remove();
     }
+    if (!('tmOpOriginalRadius' in host.dataset))
+      host.dataset.tmOpOriginalRadius = getComputedStyle(host).borderRadius;
     host.classList.add('tm-op-cover-host');
     const img = document.createElement('img');
     img.className = 'tm-op-cover-img';
@@ -205,6 +239,7 @@
       img.remove();
       host.classList.remove('tm-op-cover-host');
       host.style.removeProperty('--tm-op-ratio');
+      host.style.removeProperty('--tm-op-clip-radius');
       for (const name of ['aspect-ratio', 'height', 'width', 'min-height', 'flex'])
         host.style.removeProperty(name);
       host.dataset.tmCoverFailed = '1';
