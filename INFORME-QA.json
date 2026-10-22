@@ -1,0 +1,66 @@
+{
+  "stats": {
+    "works": 199,
+    "editions": 216,
+    "series": 216,
+    "volumes": 1230,
+    "entries": 238
+  },
+  "report": {
+    "targetEdits": 52,
+    "processedEdits": 52,
+    "missingWorks": [],
+    "addedEdits": 4,
+    "reusedEdits": 48,
+    "newVolumes": 905,
+    "reusedVolumes": 118,
+    "sagaNumberingPending": [
+      {
+        "work": "Dragon Ball",
+        "edition": "edition:ivrea-ar-etapa2-dragon-ball-edicion-color",
+        "sagas": [
+          {
+            "name": "Origen",
+            "count": 8
+          },
+          {
+            "name": "Piccolo",
+            "count": 4
+          },
+          {
+            "name": "Saiyajin",
+            "count": 3
+          },
+          {
+            "name": "Freezer",
+            "count": 5
+          },
+          {
+            "name": "Androides/Cell",
+            "count": 6
+          },
+          {
+            "name": "Majin Boo",
+            "count": 6
+          }
+        ]
+      }
+    ],
+    "missingFirstCovers": 28,
+    "firstCoverRefs": 24,
+    "errors": []
+  },
+  "checks": {
+    "nonDuplicateVolumeIds": true,
+    "nonDuplicateEditionIds": true,
+    "nonDuplicateWorkIds": true,
+    "idempotent": true,
+    "onePiece110": true,
+    "onePiece109Preexisting": true,
+    "noCoverOnNewTomes": true,
+    "dragonBallSagasNotSequential": true,
+    "coverPermissionsUnset": true,
+    "workCount199": true,
+    "original325Retained": true
+  }
+}
