@@ -1,8 +1,8 @@
 /*
- * TOMORI · Portadas One Piece / Editorial Ivrea Argentina · prototipo privado.
- * 2026-10-16. Uso de imágenes externas NO licenciado ni autorizado.
- * No modifica datos personales, botones, filtros, navegación ni paginación.
- * Los enlaces externos pueden fallar: en tal caso vuelve la portada provisional.
+ * TOMORI · One Piece Ivrea Argentina · portadas proporcionales · 2026-10-17.
+ * Las portadas externas se usan SOLO en el prototipo privado, sin licencia confirmada.
+ * Correccion visual: la caja se ajusta a la proporcion real de la portada.
+ * No altera coleccion, favoritos, filtros, renderizado ni paginacion.
  */
 (function () {
   'use strict';
@@ -11,6 +11,7 @@
 
   const EDITION = 'edition:ivrea-ar-one-piece';
   const WORK = 'work:one-piece';
+  const DEFAULT_RATIO = 450 / 640;
   const volumes = typeof VOLUMES !== 'undefined' && Array.isArray(VOLUMES) ? VOLUMES : [];
   const covers = new Map(volumes
     .filter(v => v.workId === WORK && v.editionId === EDITION &&
@@ -22,17 +23,63 @@
   const css = document.createElement('style');
   css.id = 'tomori-onepiece-covers-css';
   css.textContent = `
-    .tm-op-cover-host { position: relative !important; overflow: hidden; }
+    /* Ajuste SOLO de portadas One Piece con una imagen realmente enlazada. */
+    .tm-op-cover-host { position: relative !important; overflow: hidden !important;
+      box-sizing: border-box; background-color: #111; }
     .tm-op-cover-host > img.tm-op-cover-img {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: contain; object-position: center; display: block;
+      position: absolute !important; inset: 0 !important;
+      display: block !important; width: 100% !important; height: 100% !important;
+      max-width: none !important; max-height: none !important;
+      min-width: 0 !important; min-height: 0 !important;
+      margin: 0 !important; padding: 0 !important; border: 0 !important;
+      object-fit: contain !important; object-position: center center !important;
       background: #111; z-index: 1;
     }
     .tm-op-cover-host > .volume-cover-rating,
     .tm-op-cover-host > .series-rating,
     .tm-op-cover-host > .rating-seal { position: relative; z-index: 2; }
+
+    /* En tarjetas horizontales la anchura de la columna de imagen deriva
+       de la altura de la tarjeta x la proporcion de la portada (no 42% fijo). */
+    .volume-card.tm-op-card-horizontal,
+    .series-card.tm-op-card-horizontal,
+    .tm-edition-card.tm-op-card-horizontal,
+    .edition-card.tm-op-card-horizontal {
+      grid-template-columns: var(--tm-op-cover-width) minmax(0, 1fr) !important;
+      align-self: start !important;
+    }
+    .tm-op-card-horizontal .tm-op-cover-host {
+      width: var(--tm-op-cover-width) !important;
+      min-width: 0 !important; max-width: none !important;
+      flex: 0 0 var(--tm-op-cover-width) !important;
+      height: 100% !important; min-height: 0 !important;
+      aspect-ratio: var(--tm-op-ratio) !important;
+      align-self: stretch !important;
+    }
+    /* Cuando la ficha es vertical, la propia caratula determina su alto. */
+    .tm-op-card-vertical > .tm-op-cover-host,
+    .tm-op-card-vertical > .volume-main > .tm-op-cover-host {
+      width: 100% !important; height: auto !important;
+      min-height: 0 !important; aspect-ratio: var(--tm-op-ratio) !important;
+    }
+    /* Ficha principal de la obra: conservar su ancho y calcular altura proporcional. */
+    .profile-cover.tm-op-cover-host {
+      aspect-ratio: var(--tm-op-ratio, 0.703125) !important;
+      height: auto !important; min-height: 0 !important;
+      align-self: start !important;
+    }
   `;
   document.head.appendChild(css);
+
+  const watched = new WeakSet();
+  const resizeObserver = typeof ResizeObserver === 'function'
+    ? new ResizeObserver(entries => {
+        for (const entry of entries) {
+          const card = entry.target;
+          const host = card.querySelector('.tm-op-cover-host');
+          if (host) fitCover(host);
+        }
+      }) : null;
 
   function isSeriesProfile() {
     if (!document.querySelector('#volumeResults')) return false;
@@ -67,34 +114,116 @@
     if (/(?:ivrea|argentina)/i.test(text) && (/(?:one\s*piece)/i.test(text) || profile)) return true;
     if (!profile || (!/one\s*piece/i.test(heading) && !/tomo\s*\d+/i.test(heading))) return false;
     const editionSelect = document.getElementById('volumeEdition');
-    // When the title is ambiguous, only assign the cover in the Ivrea-only filtered list.
     return !!(editionSelect && editionSelect.value === EDITION && card.closest('#volumeResults'));
   }
 
+  function ratioOf(host) {
+    const img = host.querySelector(':scope > img.tm-op-cover-img');
+    const nativeRatio = img && img.naturalWidth > 0 && img.naturalHeight > 0
+      ? img.naturalWidth / img.naturalHeight : DEFAULT_RATIO;
+    // Ignore distorted dimensions sent by an image CDN; manga covers are vertical.
+    return Number.isFinite(nativeRatio) && nativeRatio >= 0.52 && nativeRatio <= 0.86
+      ? nativeRatio : DEFAULT_RATIO;
+  }
+
+  function getInfo(card, host) {
+    const candidate = card.querySelector('.volume-info, .series-info, .tm-edition-info, .edition-info, .tm-edition-details, .edition-details');
+    if (candidate && !host.contains(candidate)) return candidate;
+    return Array.from(card.children).find(child => child !== host && !child.contains(host)) || null;
+  }
+
+  function fitCover(host) {
+    if (!host.isConnected) return;
+    const ratio = ratioOf(host);
+    host.style.setProperty('--tm-op-ratio', String(ratio));
+    host.style.setProperty('aspect-ratio', String(ratio), 'important');
+    const card = host.closest('.volume-card, .series-card, .tm-edition-card, .edition-card');
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const coverRect = host.getBoundingClientRect();
+    const info = getInfo(card, host);
+    const infoRect = info?.getBoundingClientRect();
+    if (!rect.width || !rect.height || !coverRect.width || !coverRect.height) return;
+
+    // Detectar la disposicion existente, sin imponer un nuevo diseno.
+    // Tambien sirve en movil cuando una ficha cambia de horizontal a vertical.
+    const horizontal = infoRect && infoRect.width > 0 &&
+      infoRect.left >= coverRect.right - 12 &&
+      infoRect.top < coverRect.bottom - Math.min(12, coverRect.height / 4);
+    card.classList.toggle('tm-op-card-horizontal', Boolean(horizontal));
+    card.classList.toggle('tm-op-card-vertical', !horizontal);
+    if (horizontal) {
+      const desired = Math.max(40, Math.min(rect.width * 0.63,
+        (rect.height - (card.clientTop || 0) * 2) * ratio));
+      const px = `${Math.round(desired * 10) / 10}px`;
+      if (card.style.getPropertyValue('--tm-op-cover-width') !== px)
+        card.style.setProperty('--tm-op-cover-width', px);
+      card.style.setProperty('--tm-op-ratio', String(ratio));
+      // Propiedades directas: prevalecen sobre CSS antiguo guardado en cache
+      // o reglas especificas de las fichas aprobadas.
+      card.style.setProperty('grid-template-columns', `${px} minmax(0, 1fr)`, 'important');
+      host.style.setProperty('width', px, 'important');
+      host.style.setProperty('height', '100%', 'important');
+      host.style.setProperty('min-height', '0', 'important');
+      host.style.setProperty('flex', `0 0 ${px}`, 'important');
+    } else {
+      card.style.removeProperty('--tm-op-cover-width');
+      card.style.setProperty('--tm-op-ratio', String(ratio));
+      card.style.removeProperty('grid-template-columns');
+      host.style.setProperty('width', '100%', 'important');
+      host.style.setProperty('height', 'auto', 'important');
+      host.style.setProperty('min-height', '0', 'important');
+      host.style.removeProperty('flex');
+    }
+    if (resizeObserver && !watched.has(card)) {
+      watched.add(card);
+      resizeObserver.observe(card);
+    }
+  }
+
   function putImage(host, url, alt) {
-    if (!host || !url) return;
+    if (!host || !url || host.dataset.tmCoverFailed === '1') return;
     const previous = host.querySelector(':scope > img.tm-op-cover-img');
     if (previous) {
-      if (previous.dataset.coverUrl === url) return;
+      if (previous.dataset.coverUrl === url) { fitCover(host); return; }
       previous.remove();
     }
     host.classList.add('tm-op-cover-host');
     const img = document.createElement('img');
     img.className = 'tm-op-cover-img';
     img.dataset.coverUrl = url;
-    img.src = url;
     img.alt = alt;
     img.loading = 'lazy';
     img.decoding = 'async';
     img.referrerPolicy = 'no-referrer';
+    img.addEventListener('load', () => {
+      if (host.classList.contains('profile-cover'))
+        host.style.setProperty('aspect-ratio', String(ratioOf(host)), 'important');
+      fitCover(host);
+    }, { once: true });
     img.addEventListener('error', () => {
-      // Keep the original provisional black cover; never hide the card.
       img.remove();
       host.classList.remove('tm-op-cover-host');
+      host.style.removeProperty('--tm-op-ratio');
+      for (const name of ['aspect-ratio', 'height', 'width', 'min-height', 'flex'])
+        host.style.removeProperty(name);
       host.dataset.tmCoverFailed = '1';
+      const card = host.closest('.volume-card, .series-card, .tm-edition-card, .edition-card');
+      if (card) {
+        card.classList.remove('tm-op-card-horizontal', 'tm-op-card-vertical');
+        card.style.removeProperty('--tm-op-cover-width');
+        card.style.removeProperty('--tm-op-ratio');
+        card.style.removeProperty('grid-template-columns');
+      }
     }, { once: true });
-    // Preserve rating badge as the top layer.
     host.insertBefore(img, host.firstChild);
+    img.src = url;
+    if (host.classList.contains('profile-cover')) {
+      host.style.setProperty('aspect-ratio', String(DEFAULT_RATIO), 'important');
+      host.style.setProperty('height', 'auto', 'important');
+      host.style.setProperty('min-height', '0', 'important');
+    }
+    fitCover(host);
   }
 
   function applyVolumeCovers() {
@@ -103,28 +232,25 @@
       const number = volumeNumber(card);
       if (!number || !covers.has(number) || !belongsToIvrea(card, profile)) return;
       const host = card.querySelector('.volume-cover');
-      if (host && host.dataset.tmCoverFailed !== '1') {
-        putImage(host, covers.get(number), `Portada de One Piece, tomo ${number}, Ivrea Argentina`);
-      }
+      if (host) putImage(host, covers.get(number), `Portada de One Piece, tomo ${number}, Ivrea Argentina`);
     });
   }
 
   function applySeriesCovers() {
-    // One Piece's work and Ivrea edition: use volume 1 as the visual representative.
     document.querySelectorAll('.series-card').forEach(card => {
       const name = card.dataset.series || card.querySelector('h3, h2')?.textContent || '';
       if (!/^\s*one\s*piece\s*$/i.test(name)) return;
       const host = card.querySelector('.series-cover');
-      if (host && host.dataset.tmCoverFailed !== '1') putImage(host, covers.get(1), 'One Piece · Portada del tomo 1 de Ivrea Argentina');
+      if (host) putImage(host, covers.get(1), 'One Piece · Portada del tomo 1 de Ivrea Argentina');
     });
     if (!isSeriesProfile()) return;
     const host = document.querySelector('.profile-cover');
-    if (host && host.dataset.tmCoverFailed !== '1') putImage(host, covers.get(1), 'One Piece · Portada del tomo 1 de Ivrea Argentina');
+    if (host) putImage(host, covers.get(1), 'One Piece · Portada del tomo 1 de Ivrea Argentina');
     document.querySelectorAll('#editionResults .tm-edition-card, #editionResults .edition-card').forEach(card => {
       const text = card.textContent || '';
       if (!/ivrea/i.test(text) || /planeta|panini/i.test(text)) return;
-      const editionCover = card.querySelector('.tm-edition-cover, .edition-cover, .series-cover, .volume-cover');
-      if (editionCover && editionCover.dataset.tmCoverFailed !== '1') putImage(editionCover, covers.get(1), 'One Piece · Portada de la edición Ivrea Argentina');
+      const cover = card.querySelector('.tm-edition-cover, .edition-cover, .series-cover, .volume-cover');
+      if (cover) putImage(cover, covers.get(1), 'One Piece · Portada de la edición Ivrea Argentina');
     });
   }
 
@@ -140,15 +266,16 @@
   }
   function init() {
     sync();
-    // Renderers replace whole card lists on state changes; reapply only the images.
-    // childList observation does not watch text, button state or filters directly.
-    const obs = new MutationObserver(mutations => {
+    // Reaplicar portadas despues de filtros, "Lo tengo" y "Mostrar mas".
+    // No observar atributos ni texto para evitar bucles de renderizado.
+    const observer = new MutationObserver(mutations => {
       if (mutations.some(m => [...m.addedNodes].some(node =>
         node.nodeType === 1 && !node.classList?.contains('tm-op-cover-img')))) sync();
     });
-    obs.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, { childList: true, subtree: true });
     document.getElementById('volumeEdition')?.addEventListener('change', sync);
     window.addEventListener('tomori:state', sync);
+    window.addEventListener('resize', sync, { passive: true });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
