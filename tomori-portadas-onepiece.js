@@ -1,5 +1,5 @@
 /*
- * TOMORI · One Piece Ivrea Argentina · portadas a sangre y esquinas redondeadas · 2026-10-22 · zoom + centrado.
+ * TOMORI · One Piece Ivrea Argentina · portadas a sangre y esquinas redondeadas · 2026-10-22 · zoom + centrado + tiras de valoracion.
  * Las portadas externas se usan SOLO en el prototipo privado, sin licencia confirmada.
  * Correccion visual: la imagen cubre todo el marco, sin bandas y con esquinas redondeadas.
  * No altera coleccion, favoritos, filtros, renderizado ni paginacion.
@@ -42,12 +42,42 @@
       object-fit: cover !important; object-position: center center !important;
       border-radius: inherit !important;
       /* Amplificacion suave: evita ribetes claros que algunas imagenes traen incorporados. */
-      transform: scale(1.04) !important; transform-origin: center center !important;
+      transform: scale(1.06) !important; transform-origin: center center !important;
       background: #111; z-index: 1;
     }
     .tm-op-cover-host > .volume-cover-rating,
-    .tm-op-cover-host > .series-rating,
-    .tm-op-cover-host > .rating-seal { position: relative; z-index: 2; }
+    .tm-op-cover-host > .rating-seal {
+      position: absolute !important;
+      left: 0 !important; bottom: 0 !important; top: auto !important; right: auto !important;
+      z-index: 2 !important;
+      display: inline-flex !important; align-items: center !important; gap: 6px !important;
+      min-height: 0 !important;
+      padding: 8px 12px 7px 12px !important;
+      margin: 0 !important;
+      background: rgba(232,232,232,.70) !important;
+      color: #111 !important;
+      border: 0 !important;
+      border-radius: 0 12px 0 0 !important;
+      box-shadow: none !important;
+      line-height: 1 !important;
+      font-weight: 700 !important;
+      pointer-events: none !important;
+      -webkit-backdrop-filter: blur(1px) !important;
+      backdrop-filter: blur(1px) !important;
+    }
+    .tm-op-cover-host > .volume-cover-rating .volume-cover-rating-value,
+    .tm-op-cover-host > .rating-seal .rating-value,
+    .tm-op-cover-host > .rating-seal {
+      font-size: .92rem !important;
+      color: #111 !important;
+      font-variant-numeric: tabular-nums !important;
+    }
+    .tm-op-cover-host > .volume-cover-rating .volume-cover-rating-star,
+    .tm-op-cover-host > .rating-seal .rating-star {
+      font-size: .95rem !important;
+      color: #c62828 !important;
+      line-height: 1 !important;
+    }
 
     /* En tarjetas horizontales la anchura de la columna de imagen deriva
        de la altura de la tarjeta x la proporcion de la portada (no 42% fijo). */
