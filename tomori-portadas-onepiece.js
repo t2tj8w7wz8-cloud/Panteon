@@ -1,5 +1,5 @@
 /*
- * TOMORI · One Piece Ivrea Argentina · portadas a sangre y esquinas redondeadas · 2026-10-22.
+ * TOMORI · One Piece Ivrea Argentina · portadas a sangre y esquinas redondeadas · 2026-10-22 · zoom + centrado.
  * Las portadas externas se usan SOLO en el prototipo privado, sin licencia confirmada.
  * Correccion visual: la imagen cubre todo el marco, sin bandas y con esquinas redondeadas.
  * No altera coleccion, favoritos, filtros, renderizado ni paginacion.
@@ -42,7 +42,7 @@
       object-fit: cover !important; object-position: center center !important;
       border-radius: inherit !important;
       /* Amplificacion suave: evita ribetes claros que algunas imagenes traen incorporados. */
-      transform: scale(1.025) !important; transform-origin: center center !important;
+      transform: scale(1.04) !important; transform-origin: center center !important;
       background: #111; z-index: 1;
     }
     .tm-op-cover-host > .volume-cover-rating,
@@ -76,7 +76,9 @@
     .profile-cover.tm-op-cover-host {
       aspect-ratio: var(--tm-op-ratio, 0.703125) !important;
       height: auto !important; min-height: 0 !important;
-      align-self: start !important;
+      align-self: center !important;
+      justify-self: center !important;
+      margin-inline: auto !important;
     }
   `;
   document.head.appendChild(css);
